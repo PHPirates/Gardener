@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Gardener</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_show_alarm">ShowAlarm</string>
+    <string name="setTime">Change time</string>
+    <string name="setDate">Change date</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="add">Save</string>
+    <string name="new_alarm">New alarm</string>
+    <string name="main">Save and back</string>
+    <string name="title_activity_date_fragment">DateFragment</string>
+    <string name="title_activity_time_fragment">TimeFragment</string>
+    <string name="snooze_message">Snooze me</string>
+    <string name="title_activity_alarm_receiver">AlarmReceiver</string>
+    <string name="default_notif">Default notification text</string>
+    <string name="dontforget">Don\'t forget to %1$s at %2$s</string>
+
+
+</resources>
