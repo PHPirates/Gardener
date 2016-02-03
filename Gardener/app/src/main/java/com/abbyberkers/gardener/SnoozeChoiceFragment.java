@@ -17,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.abbyberkers.gardener.dummy.DummyContent;
-import com.abbyberkers.gardener.dummy.DummyContent.DummyItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
