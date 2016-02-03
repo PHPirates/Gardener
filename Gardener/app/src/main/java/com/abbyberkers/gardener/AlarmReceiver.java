@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,9 +41,8 @@ public class AlarmReceiver extends AppCompatActivity {
          */
 
 
-
         //now the same for the action button from the notification
-       // TextView snoozeTextView = (TextView) findViewById(R.id.snoozeMessageText);
+        // TextView snoozeTextView = (TextView) findViewById(R.id.snoozeMessageText);
         //(3).... and then get String and setText!
         //String snoozeText = getIntent().getStringExtra("snoozeMessage"); //getString("STRING_I_NEED");
         if (TextUtils.isEmpty(reminderMessage)) {
@@ -57,9 +57,9 @@ public class AlarmReceiver extends AppCompatActivity {
         reminderMessage = getIntent().getStringExtra("message");
 
         //assign textview to the instance variable also used in choicePass
-        mainTextView = (TextView)findViewById(R.id.messageText);
+        mainTextView = (TextView) findViewById(R.id.messageText);
         mainTextView.setText(String.format(getResources().getString(
-                R.string.dontforget), reminderMessage,millisToText(getTimeByID())));
+                R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
 
         //This will remove the notification if the action button is pressed
         // instead of the notification, but only when the activity is displayed
@@ -69,7 +69,7 @@ public class AlarmReceiver extends AppCompatActivity {
 
     }
 
-    public long getTimeByID () {
+    public long getTimeByID() {
         //gets the time corresponding to the alarm currently shown
         List<Long> timesList = mydb.getAllAlarmTimesInMillis();
         ArrayList<Integer> arrayListID = mydb.getAllAlarmIDs();
@@ -78,11 +78,10 @@ public class AlarmReceiver extends AppCompatActivity {
     }
 
 
-
     public void showChoiceDialog(View view) {
         FragmentManager fm = getFragmentManager();
         SnoozeChoiceFragment snoozeChoiceFragment = new SnoozeChoiceFragment();
-        snoozeChoiceFragment.show(fm,"Snooze me for...");
+        snoozeChoiceFragment.show(fm, "Snooze me for...");
     }
 
     public void choicePass(long choice) {
@@ -95,23 +94,23 @@ public class AlarmReceiver extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(),millisToText(choice),Toast.LENGTH_SHORT).show();
 
         //if update succeeded
-        if(mydb.updateAlarm(idToUpdate, reminderMessage,
+        if (mydb.updateAlarm(idToUpdate, reminderMessage,
                 choice)) {
-            Toast.makeText(getApplicationContext(),"Alarm is snoozed",Toast.LENGTH_SHORT).show();
-        }else{
+            Toast.makeText(getApplicationContext(), "Alarm is snoozed", Toast.LENGTH_SHORT).show();
+        } else {
             Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
         }
 
 
         //set alarm using alarmmanager
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         //intent to DisplayNotification
         //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
-        Intent intent = new Intent(this,DisplayNotification.class);
+        Intent intent = new Intent(this, DisplayNotification.class);
         //add the message and id
-        intent.putExtra("id",idToUpdate);
+        intent.putExtra("id", idToUpdate);
         intent.putExtra("message", reminderMessage);
-        intent.putExtra("snoozeMessage",R.string.snooze_message);
+        intent.putExtra("snoozeMessage", R.string.snooze_message);
         //intent.setAction("foo"); //dummy action?
 
         /** set the flags so the mainactivity isn't started when the notification is triggered
@@ -126,11 +125,11 @@ public class AlarmReceiver extends AppCompatActivity {
                 intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT TODO what why
 
 
-        cancelAlarmIfExists(this,idToUpdate,intent);
+        cancelAlarmIfExists(this, idToUpdate, intent);
 
         //finally, set alarm
         alarmManager.set(AlarmManager.RTC_WAKEUP,
-                choice,displayIntent);
+                choice, displayIntent);
 
         //update textview
         this.mainTextView.setText(String.format(getResources().getString(
@@ -144,12 +143,12 @@ public class AlarmReceiver extends AppCompatActivity {
 
     }
 
-    public void cancelAlarmIfExists(Context mContext, int id, Intent intent){
-        try{
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, id, intent,0);
-            AlarmManager am=(AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+    public void cancelAlarmIfExists(Context mContext, int id, Intent intent) {
+        try {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, id, intent, 0);
+            AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             am.cancel(pendingIntent);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

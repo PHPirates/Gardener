@@ -52,13 +52,12 @@ public class MainActivity extends AppCompatActivity {
 //        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
 //                android.R.layout.simple_list_item_1, arrayList);
 
-        if (arrayList.isEmpty()){ //default
+        if (arrayList.isEmpty()) { //default
             arrayList.add("You have no alarms");
             timesList.add("");
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String> (getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, arrayList)
-        {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, arrayList) {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView text1 = (TextView) view.findViewById(android.R.id.text1);
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 return view;
             }
         };
-        obj = (ListView)findViewById(R.id.listView1);
+        obj = (ListView) findViewById(R.id.listView1);
         obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
         //set clicklistener for items in the listview
         obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
                 dataBundle.putInt("id", idToSearch);
                 //start the ShowAlarm activity with the id to search in the database
-                Intent intent = new Intent(getApplicationContext(),ShowAlarm.class);
+                Intent intent = new Intent(getApplicationContext(), ShowAlarm.class);
                 intent.putExtras(dataBundle);
                 startActivity(intent);
             }
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             Bundle dataBundle = new Bundle();
             dataBundle.putInt("id", 0);
-            Intent intent = new Intent(getApplicationContext(),ShowAlarm.class);
+            Intent intent = new Intent(getApplicationContext(), ShowAlarm.class);
             intent.putExtras(dataBundle);
             startActivity(intent);
             return true;
