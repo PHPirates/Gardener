@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,8 +28,10 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class ShowAlarm extends AppCompatActivity {
@@ -122,6 +125,7 @@ public class ShowAlarm extends AppCompatActivity {
                 });
 
             } else {
+
                 //if you're adding something, set a clicklistener that cancels
                 Button cancelButton = (Button)findViewById(R.id.cancelButton);
                 cancelButton.setText(R.string.cancel);
@@ -311,12 +315,13 @@ public class ShowAlarm extends AppCompatActivity {
         //also sets alarm
 
         Bundle extras = getIntent().getExtras();
-        long time = timeToInt(); //get chosen time in millis
+        long time = timeToInt(); //get chosen (or otherwise current) time in millis
         //Toast.makeText(getApplicationContext(),millisToText(time),Toast.LENGTH_SHORT).show();
         if (extras !=null) {
-            int Value = extras.getInt("id");
+            //int Value = extras.getInt("id"); //use global value set in onCreate
             if (Value>0) {
-                //we're in edit mode
+                //we're in edit mode, so change time to database time
+                time = getTimeDatabase();
                 //if update succeeded
                 if(mydb.updateAlarm(idToUpdate,message.getText().toString(),
                         time)) {
@@ -331,6 +336,10 @@ public class ShowAlarm extends AppCompatActivity {
                 }else{
                     Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
                 }
+                List<Integer> listID = mydb.getAllAlarmIDs(); //id to pass via notification also has to be set!
+                //id is the last added, so the last element of ListID
+                idToUpdate = listID.get(listID.size() -1);
+                //Log.e("G",Integer.toString(idToUpdate));
             }
 
             //set alarm using alarmmanager

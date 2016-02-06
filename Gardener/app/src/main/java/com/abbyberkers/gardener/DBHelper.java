@@ -94,7 +94,7 @@ public class DBHelper extends SQLiteOpenHelper {
         while (!res.isAfterLast()){
             String listItem = res.getString(
                     res.getColumnIndex(ALARMS_COLUMN_MESSAGE));
-            if (listItem.length()>25) {
+            if ((listItem!=null)&&listItem.length()>25) { //listItem can be empty?
                 String cutString = listItem.substring(0,25);
                 listItem = cutString+"...";
             }

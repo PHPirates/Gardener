@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,13 @@ public class AlarmReceiver extends AppCompatActivity {
          * so that when you click e.g. the action button the other string is empty.
          */
 
+        //get id from notification
+        idToUpdate = getIntent().getExtras().getInt("id");
+        //Log.e("Gardener","oncreate"+Integer.toString(idToUpdate));
+        //get message
+        reminderMessage = getIntent().getStringExtra("message");
+        //assign textview to the instance variable also used in choicePass
+        mainTextView = (TextView) findViewById(R.id.messageText);
 
         //now the same for the action button from the notification
         // TextView snoozeTextView = (TextView) findViewById(R.id.snoozeMessageText);
@@ -49,17 +58,18 @@ public class AlarmReceiver extends AppCompatActivity {
             //if the reminder string is empty it means the snooze button was pressed
             //display choice dialog
             showChoiceDialog(findViewById(R.id.snoozeButton));
+            mainTextView.setText(String.format(getResources().getString(
+                    R.string.dontforget), R.string.default_notif, millisToText(getTimeByID())));
+            Toast.makeText(getApplicationContext(),mainTextView.getText(),Toast.LENGTH_SHORT).show();
+        } else {
+
+            mainTextView.setText(String.format(getResources().getString(
+                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
         }
 
-        //get id from notification
-        idToUpdate = getIntent().getExtras().getInt("id");
-        //get message
-        reminderMessage = getIntent().getStringExtra("message");
 
-        //assign textview to the instance variable also used in choicePass
-        mainTextView = (TextView) findViewById(R.id.messageText);
-        mainTextView.setText(String.format(getResources().getString(
-                R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+
+
 
         //This will remove the notification if the action button is pressed
         // instead of the notification, but only when the activity is displayed
@@ -73,8 +83,10 @@ public class AlarmReceiver extends AppCompatActivity {
         //gets the time corresponding to the alarm currently shown
         List<Long> timesList = mydb.getAllAlarmTimesInMillis();
         ArrayList<Integer> arrayListID = mydb.getAllAlarmIDs();
+        //Log.e("Gardener","gettimebyid"+Integer.toString(idToUpdate));
+        //Toast.makeText(getApplicationContext(), Integer.toString(idToUpdate),Toast.LENGTH_LONG).show();
         int timeIndex = arrayListID.indexOf(idToUpdate);
-        return timesList.get(timeIndex);
+        return timesList.get(timeIndex); //TODO indexoutofbounds exception when first time notification? idToUpdate = 0.
     }
 
 
@@ -132,9 +144,10 @@ public class AlarmReceiver extends AppCompatActivity {
                 choice, displayIntent);
 
         //update textview
-        this.mainTextView.setText(String.format(getResources().getString(
-                R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
-
+        if (reminderMessage!=null) { //is null if coming from snooze action button
+            this.mainTextView.setText(String.format(getResources().getString(
+                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+        }
 
 //            //after alarm added, to back to main
 //            Intent mainIntent = new Intent(getApplicationContext(),
@@ -156,6 +169,15 @@ public class AlarmReceiver extends AppCompatActivity {
     public String millisToText(long m) {
         Date date = new Date(m);
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
+    }
+
+    public boolean onKeyDown(int keycode, KeyEvent event) {
+        if (keycode == KeyEvent.KEYCODE_BACK) {
+            //on back key go to main
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+        }
+        return super.onKeyDown(keycode, event);
     }
 
 }
