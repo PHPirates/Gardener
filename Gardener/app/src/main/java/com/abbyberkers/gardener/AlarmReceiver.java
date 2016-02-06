@@ -22,7 +22,9 @@ import java.util.Date;
 import java.util.List;
 
 public class AlarmReceiver extends AppCompatActivity {
-    //this is the activity that is shown after you click the notification
+    /**
+     * this is the activity that is shown after you click the notification
+     */
     int idToUpdate = 0;
     DBHelper mydb = new DBHelper(this); //to connect to database
     //the textview that shows the string the notification passed
@@ -54,22 +56,17 @@ public class AlarmReceiver extends AppCompatActivity {
         // TextView snoozeTextView = (TextView) findViewById(R.id.snoozeMessageText);
         //(3).... and then get String and setText!
         //String snoozeText = getIntent().getStringExtra("snoozeMessage"); //getString("STRING_I_NEED");
+
         if (TextUtils.isEmpty(reminderMessage)) {
             //if the reminder string is empty it means the snooze button was pressed
             //display choice dialog
             showChoiceDialog(findViewById(R.id.snoozeButton));
-            mainTextView.setText(String.format(getResources().getString(
-                    R.string.dontforget), R.string.default_notif, millisToText(getTimeByID())));
-            Toast.makeText(getApplicationContext(),mainTextView.getText(),Toast.LENGTH_SHORT).show();
+            mainTextView.setText(getResources().getString(
+                    R.string.snoozed_text)); //funny note: R.string.app_name is equal to getTimeByID
         } else {
-
             mainTextView.setText(String.format(getResources().getString(
                     R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
         }
-
-
-
-
 
         //This will remove the notification if the action button is pressed
         // instead of the notification, but only when the activity is displayed
@@ -80,13 +77,13 @@ public class AlarmReceiver extends AppCompatActivity {
     }
 
     public long getTimeByID() {
-        //gets the time corresponding to the alarm currently shown
+        /**
+         * gets the time corresponding to the alarm currently shown
+         */
         List<Long> timesList = mydb.getAllAlarmTimesInMillis();
         ArrayList<Integer> arrayListID = mydb.getAllAlarmIDs();
-        //Log.e("Gardener","gettimebyid"+Integer.toString(idToUpdate));
-        //Toast.makeText(getApplicationContext(), Integer.toString(idToUpdate),Toast.LENGTH_LONG).show();
         int timeIndex = arrayListID.indexOf(idToUpdate);
-        return timesList.get(timeIndex); //TODO indexoutofbounds exception when first time notification? idToUpdate = 0.
+        return timesList.get(timeIndex);
     }
 
 
@@ -97,13 +94,13 @@ public class AlarmReceiver extends AppCompatActivity {
     }
 
     public void choicePass(long choice) {
-        //this is the extra snooze time passed by SnoozeChoiceFragment
-        // very similar to addAlarm from ShowAlarm activity
-        //saves alarm into database (with the text shown) and sets alarm
+        /**this is the extra snooze time passed by SnoozeChoiceFragment
+         * very similar to addAlarm from ShowAlarm activity
+         * saves alarm into database (with the text shown) and sets alarm
+         */
 
         //get time from database and add choice of delay to it
         choice += getTimeByID();
-        //Toast.makeText(getApplicationContext(),millisToText(choice),Toast.LENGTH_SHORT).show();
 
         //if update succeeded
         if (mydb.updateAlarm(idToUpdate, reminderMessage,
@@ -144,10 +141,12 @@ public class AlarmReceiver extends AppCompatActivity {
                 choice, displayIntent);
 
         //update textview
-        if (reminderMessage!=null) { //is null if coming from snooze action button
-            this.mainTextView.setText(String.format(getResources().getString(
-                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+        if (reminderMessage==null) { //if coming via snooze action button, reminderMessage was empty
+            reminderMessage = getIntent().getStringExtra("alarmMessage"); //the message passed with snooze intent
         }
+        this.mainTextView.setText(String.format(getResources().getString(
+                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+
 
 //            //after alarm added, to back to main
 //            Intent mainIntent = new Intent(getApplicationContext(),

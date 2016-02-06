@@ -2,27 +2,25 @@ package com.abbyberkers.gardener;
 /**
  * @author Thomas
  * @coauthor Abby
- * change test
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Contacts;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,16 +55,27 @@ public class MainActivity extends AppCompatActivity {
             timesList.add("");
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, arrayList) {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                android.R.layout.simple_list_item_2, android.R.id.text1, arrayList) {
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                //no idea why this works, but it seems to.
+                // it also seems to catch if messages disappear from database/listview
+                LayoutInflater inflater = (LayoutInflater)getApplicationContext().
+                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                if (convertView == null) {
+                    //if there's no view yet, create it
+                    convertView = inflater.inflate(android.R.layout.simple_list_item_2,parent,false);
+                }
+                //convertView = super.getView(position, convertView, parent); //gives
+
+                //View view = super.getView(position, convertView, parent); // throws NPE sometimes
+                TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) convertView.findViewById(android.R.id.text2);
                 text1.setText(arrayList.get(position));
                 text1.setTextColor(Color.BLACK);
                 text2.setText(timesList.get(position));
                 text2.setTextColor(Color.BLACK);
-                return view;
+                return convertView;
             }
         };
         obj = (ListView) findViewById(R.id.listView1);

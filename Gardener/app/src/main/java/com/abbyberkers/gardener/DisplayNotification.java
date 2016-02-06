@@ -54,6 +54,7 @@ public class DisplayNotification extends BroadcastReceiver {
             actionIntent.putExtra("snoozeMessage", snoozeMessage); //("STRING_I_NEED", strName)
             //don't forget to pass the id also to the second intent
             actionIntent.putExtra("id", id);
+            actionIntent.putExtra("alarmMessage",message); //just put the message here too because we need it anyway
             PendingIntent actionPIntent = PendingIntent.getActivity(context,
                     (int) System.currentTimeMillis(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
