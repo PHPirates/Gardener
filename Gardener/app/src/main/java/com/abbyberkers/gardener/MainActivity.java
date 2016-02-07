@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
                     //if there's no view yet, create it
                     convertView = inflater.inflate(android.R.layout.simple_list_item_2,parent,false);
                 }
-                //convertView = super.getView(position, convertView, parent); //gives
 
                 //View view = super.getView(position, convertView, parent); // throws NPE sometimes
                 TextView text1 = (TextView) convertView.findViewById(android.R.id.text1);
