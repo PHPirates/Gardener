@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.Contacts;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,9 +52,11 @@ public class MainActivity extends AppCompatActivity {
 //        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
 //                android.R.layout.simple_list_item_1, arrayList);
 
+        boolean isEmpty = false;
         if (arrayList.isEmpty()) { //default
             arrayList.add("You have no alarms");
             timesList.add("");
+            isEmpty=true;
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
@@ -78,24 +81,28 @@ public class MainActivity extends AppCompatActivity {
                 return convertView;
             }
         };
-        obj = (ListView) findViewById(R.id.listView1);
+        obj = (ListView) findViewById(R.id.listView1); //set obj to listview
         obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
-        //set clicklistener for items in the listview
-        obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int idToSearch = arrayListID.get(position);
-                //set id to search from the id corresponding in the second id array
-                //what id do we need to search in the database
-                Bundle dataBundle = new Bundle();
 
-                dataBundle.putInt("id", idToSearch);
-                //start the ShowAlarm activity with the id to search in the database
-                Intent intent = new Intent(getApplicationContext(), ShowAlarm.class);
-                intent.putExtras(dataBundle);
-                startActivity(intent);
-            }
-        });
+      
+        if (!isEmpty) { //only set clicklistener if there are alarms
+            //set clicklistener for items in the listview
+            obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    //what id do we need to search in the database
+                    //set id to search from the id corresponding in the second (id) array
+                    int idToSearch = arrayListID.get(position);
+
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putInt("id", idToSearch);
+                    //start the ShowAlarm activity with the id to search in the database
+                    Intent intent = new Intent(getApplicationContext(), ShowAlarm.class);
+                    intent.putExtras(dataBundle);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

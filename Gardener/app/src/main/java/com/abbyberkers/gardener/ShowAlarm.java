@@ -74,6 +74,7 @@ public class ShowAlarm extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) { //if there's something in the bundle
+
             Value = extras.getInt("id"); //get the id to search
 
             if (Value>0) {
