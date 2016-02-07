@@ -39,6 +39,7 @@ public class AlarmReceiver extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+
         /**this activity gets both strings from both intents, so that's why you need
          * to use different intents for the notification and action buttons,
          * so that when you click e.g. the action button the other string is empty.
@@ -63,9 +64,17 @@ public class AlarmReceiver extends AppCompatActivity {
             showChoiceDialog(findViewById(R.id.snoozeButton));
             mainTextView.setText(getResources().getString(
                     R.string.snoozed_text)); //funny note: R.string.app_name is equal to getTimeByID
+
+
         } else {
             mainTextView.setText(String.format(getResources().getString(
                     R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+        }
+
+        //TODO workaround for message not passed when snooze button hit
+        if (reminderMessage==null) {
+        //if coming via snooze action button, reminderMessage was empty so set it for other methods to use
+            reminderMessage = getIntent().getStringExtra("alarmMessage"); //the message passed with snooze intent
         }
 
         //This will remove the notification if the action button is pressed
@@ -98,6 +107,8 @@ public class AlarmReceiver extends AppCompatActivity {
          * very similar to addAlarm from ShowAlarm activity
          * saves alarm into database (with the text shown) and sets alarm
          */
+
+
 
         //get time from database and add choice of delay to it
         choice += getTimeByID();
@@ -141,9 +152,6 @@ public class AlarmReceiver extends AppCompatActivity {
                 choice, displayIntent);
 
         //update textview
-        if (reminderMessage==null) { //if coming via snooze action button, reminderMessage was empty
-            reminderMessage = getIntent().getStringExtra("alarmMessage"); //the message passed with snooze intent
-        }
         this.mainTextView.setText(String.format(getResources().getString(
                     R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
 
