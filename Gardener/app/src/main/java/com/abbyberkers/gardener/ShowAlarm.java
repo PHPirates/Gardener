@@ -5,6 +5,7 @@ package com.abbyberkers.gardener;
  */
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
@@ -401,6 +402,12 @@ public class ShowAlarm extends AppCompatActivity {
                     getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_ONE_SHOT);
             AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);
             am.cancel(pendingIntent);
+
+            //cancel notification if displayed, when cancel button clicked
+            NotificationManager nm = (NotificationManager)
+                    getSystemService(NOTIFICATION_SERVICE);
+            nm.cancel(idToUpdate);
+
         }catch (Exception e){
             e.printStackTrace();
         }
