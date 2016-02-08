@@ -79,6 +79,18 @@ public class ShowAlarm extends AppCompatActivity {
 
             if (Value>0) {
                 //then we want to change an alarm and not add one
+
+                //we're in edit mode, so change instance variables to database time
+                long time = getTimeDatabase();
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(time);
+                this.year = cal.get(Calendar.YEAR);
+                this.month = cal.get(Calendar.MONTH);
+                this.day = cal.get(Calendar.DAY_OF_MONTH);
+                this.hour = cal.get(Calendar.HOUR_OF_DAY);
+                this.minute = cal.get(Calendar.MINUTE);
+
+
                 Cursor rs = mydb.getData(Value);
                 idToUpdate = Value;
                 rs.moveToFirst();
@@ -120,8 +132,11 @@ public class ShowAlarm extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         mydb.deleteAlarm(idToUpdate);
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                        startActivity(intent);
+                        //cancel alarm as well
+                        cancelAlarmIfExists();
+
+                        Intent mainIntent = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(mainIntent);
                     }
                 });
 
@@ -281,11 +296,6 @@ public class ShowAlarm extends AppCompatActivity {
 
         currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
 
-        //TextView mTimeText = (TextView) findViewById(R.id.chosenTime);
-        //use a string with placeholders
-        //String textString = String.format(getResources().getString(R.string.chosenTime), currentDateTimeString);
-        //mTimeText.setText(textString);
-
         Button dateButton = (Button)findViewById(R.id.setDate);
         Button timeButton = (Button)findViewById(R.id.setTime);
 
@@ -312,8 +322,11 @@ public class ShowAlarm extends AppCompatActivity {
         return c.getTimeInMillis();
     }
 
-    public void addAlarm(View view) { //when save button clicked
-        //also sets alarm
+    public void addAlarm(View view) {
+        /**
+         * when save button clicked
+         *  also sets alarm
+         */
 
         Bundle extras = getIntent().getExtras();
         long time = timeToInt(); //get chosen (or otherwise current) time in millis
@@ -321,8 +334,6 @@ public class ShowAlarm extends AppCompatActivity {
         if (extras !=null) {
             //int Value = extras.getInt("id"); //use global value set in onCreate
             if (Value>0) {
-                //we're in edit mode, so change time to database time
-                time = getTimeDatabase();
                 //if update succeeded
                 if(mydb.updateAlarm(idToUpdate,message.getText().toString(),
                         time)) {
@@ -347,7 +358,7 @@ public class ShowAlarm extends AppCompatActivity {
             AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
             //intent to DisplayNotification
             //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
-            Intent intent = new Intent(this,DisplayNotification.class);
+            Intent intent = new Intent(getApplicationContext(),DisplayNotification.class);
             //add the message and id
             intent.putExtra("id",idToUpdate);
             intent.putExtra("message", message.getText().toString());
@@ -362,11 +373,10 @@ public class ShowAlarm extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
             PendingIntent displayIntent = PendingIntent.getBroadcast(
-                    this, idToUpdate, //assign a unique id, using the database id
+                    getApplicationContext(), idToUpdate, //assign a unique id, using the database id
                     intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT
 
-
-            cancelAlarmIfExists(this,idToUpdate,intent);
+            cancelAlarmIfExists();
 
             //finally, set alarm
             alarmManager.set(AlarmManager.RTC_WAKEUP,
@@ -381,10 +391,15 @@ public class ShowAlarm extends AppCompatActivity {
         }
     }
 
-    public void cancelAlarmIfExists(Context mContext, int id, Intent intent){
+    public void cancelAlarmIfExists(){
+        /**
+         * uses global idToUpdate
+         */
         try{
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, id, intent,0);
-            AlarmManager am=(AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(getApplicationContext(),DisplayNotification.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);
             am.cancel(pendingIntent);
         }catch (Exception e){
             e.printStackTrace();

@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         obj = (ListView) findViewById(R.id.listView1); //set obj to listview
         obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
 
-      
+
         if (!isEmpty) { //only set clicklistener if there are alarms
             //set clicklistener for items in the listview
             obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
