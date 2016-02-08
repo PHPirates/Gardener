@@ -329,66 +329,70 @@ public class ShowAlarm extends AppCompatActivity {
          *  also sets alarm
          */
 
-        Bundle extras = getIntent().getExtras();
-        long time = timeToInt(); //get chosen (or otherwise current) time in millis
-        //Toast.makeText(getApplicationContext(),millisToText(time),Toast.LENGTH_SHORT).show();
-        if (extras !=null) {
-            //int Value = extras.getInt("id"); //use global value set in onCreate
-            if (Value>0) {
-                //if update succeeded
-                if(mydb.updateAlarm(idToUpdate,message.getText().toString(),
-                        time)) {
-                    Toast.makeText(getApplicationContext(),"Updated",Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
+        if(message.getText().toString().equals("")){
+            Toast.makeText(this, "Please fill in text field.", Toast.LENGTH_SHORT).show();
+        } else {
+
+            Bundle extras = getIntent().getExtras();
+            long time = timeToInt(); //get chosen (or otherwise current) time in millis
+            //Toast.makeText(getApplicationContext(),millisToText(time),Toast.LENGTH_SHORT).show();
+            if (extras != null) {
+                //int Value = extras.getInt("id"); //use global value set in onCreate
+                if (Value > 0) {
+                    //if update succeeded
+                    if (mydb.updateAlarm(idToUpdate, message.getText().toString(),
+                            time)) {
+                        Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if (mydb.insertAlarm(message.getText().toString(),
+                            time)) {
+                        Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
+                    }
+                    List<Integer> listID = mydb.getAllAlarmIDs(); //id to pass via notification also has to be set!
+                    //id is the last added, so the last element of ListID
+                    idToUpdate = listID.get(listID.size() - 1);
+                    //Log.e("G",Integer.toString(idToUpdate));
                 }
-            } else {
-                if(mydb.insertAlarm(message.getText().toString(),
-                        time)) {
-                    Toast.makeText(getApplicationContext(),"Done",Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
-                }
-                List<Integer> listID = mydb.getAllAlarmIDs(); //id to pass via notification also has to be set!
-                //id is the last added, so the last element of ListID
-                idToUpdate = listID.get(listID.size() -1);
-                //Log.e("G",Integer.toString(idToUpdate));
+
+                //set alarm using alarmmanager
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                //intent to DisplayNotification
+                //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
+                Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
+                //add the message and id
+                intent.putExtra("id", idToUpdate);
+                intent.putExtra("message", message.getText().toString());
+                intent.putExtra("snoozeMessage", R.string.snooze_message);
+                //intent.setAction("foo"); //dummy action?
+
+                /** set the flags so the mainactivity isn't started when the notification is triggered
+                 * use new task to put the displaynotif in a new task, and multiple task so it doesn't
+                 * interfere with the main task. This way, the backstack of that main task isn't desturbed(?)
+                 * and when you hit the back button when in reminder activity you go back to your last page(?)
+                 */
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+                PendingIntent displayIntent = PendingIntent.getBroadcast(
+                        getApplicationContext(), idToUpdate, //assign a unique id, using the database id
+                        intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT
+
+                cancelAlarmIfExists();
+
+                //finally, set alarm
+                alarmManager.set(AlarmManager.RTC_WAKEUP,
+                        time, displayIntent);
+
+
+                //after alarm added, to back to main
+                Intent mainIntent = new Intent(getApplicationContext(),
+                        MainActivity.class);
+                startActivity(mainIntent);
             }
-
-            //set alarm using alarmmanager
-            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-            //intent to DisplayNotification
-            //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
-            Intent intent = new Intent(getApplicationContext(),DisplayNotification.class);
-            //add the message and id
-            intent.putExtra("id", idToUpdate);
-            intent.putExtra("message", message.getText().toString());
-            intent.putExtra("snoozeMessage",R.string.snooze_message);
-            //intent.setAction("foo"); //dummy action?
-
-            /** set the flags so the mainactivity isn't started when the notification is triggered
-             * use new task to put the displaynotif in a new task, and multiple task so it doesn't
-             * interfere with the main task. This way, the backstack of that main task isn't desturbed(?)
-             * and when you hit the back button when in reminder activity you go back to your last page(?)
-             */
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-
-            PendingIntent displayIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), idToUpdate, //assign a unique id, using the database id
-                    intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT
-
-            cancelAlarmIfExists();
-
-            //finally, set alarm
-            alarmManager.set(AlarmManager.RTC_WAKEUP,
-                    time,displayIntent);
-
-
-
-            //after alarm added, to back to main
-            Intent mainIntent = new Intent(getApplicationContext(),
-                    MainActivity.class);
-            startActivity(mainIntent);
         }
     }
 
@@ -425,8 +429,6 @@ public class ShowAlarm extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         addAlarm(findViewById(R.id.addButton)); //also save, view passed = button
-        Intent k = new Intent(this, MainActivity.class);
-        startActivity(k);
         return true;
     }
 
