@@ -66,6 +66,25 @@
                 android:text="@string/add"
                 />
         </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/intervalButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/interval"
+                />
+
+            <CheckBox
+                android:id="@+id/repeatCheck"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/repeat"
+                android:onClick="checkRepeat"
+                />
+        </TableRow>
     </TableLayout>
 
 </ScrollView>

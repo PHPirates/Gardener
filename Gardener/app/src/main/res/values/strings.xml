@@ -7,6 +7,8 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="add">Save</string>
+    <string name="interval">Interval</string>
+    <string name="repeat">Repeat</string>
     <string name="new_alarm">New alarm</string>
     <string name="main">Save and back</string>
     <string name="title_activity_date_fragment">DateFragment</string>

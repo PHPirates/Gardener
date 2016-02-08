@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +101,11 @@ public class ShowAlarm extends AppCompatActivity {
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_MESSAGE)); //get message from database
                 long dataDate = rs.getLong(
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_DATE)); //get date
+                long dataInterval = rs.getLong(
+                        rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL));
+                boolean repeat = rs.getInt(rs.getColumnIndex(DBHelper.ALARMS_COLUMN_REPEAT)) != 0;
+
+                Toast.makeText(this, dataInterval + " " + repeat, Toast.LENGTH_SHORT).show();
 
                 if (!rs.isClosed()) {rs.close();} //close cursor
 
@@ -348,7 +354,7 @@ public class ShowAlarm extends AppCompatActivity {
                     }
                 } else {
                     if (mydb.insertAlarm(message.getText().toString(),
-                            time)) {
+                            time, 60000, false)) {
                         Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
@@ -414,6 +420,15 @@ public class ShowAlarm extends AppCompatActivity {
 
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public void checkRepeat(View view){
+        CheckBox checkBox = (CheckBox) findViewById(R.id.repeatCheck);
+        if(checkBox.isChecked()){
+            Toast.makeText(this, "Checkbox is checked.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Checkbox is unchecked.", Toast.LENGTH_SHORT).show();
         }
     }
 
