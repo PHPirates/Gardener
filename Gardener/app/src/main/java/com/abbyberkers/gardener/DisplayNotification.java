@@ -30,11 +30,9 @@ public class DisplayNotification extends BroadcastReceiver {
 
             //get notification ID passed by MainActivity
             int id = intent.getExtras().getInt("id");
-            Toast.makeText(context,Integer.toString(id),Toast.LENGTH_SHORT).show();
             //----Oh of course, have to pass on the strings again.....-----
             //initialize strings (reminder is also used for notification text)
             String message = intent.getStringExtra("message");
-            Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
             String snoozeMessage = intent.getStringExtra("snoozeMessage");
 
 
