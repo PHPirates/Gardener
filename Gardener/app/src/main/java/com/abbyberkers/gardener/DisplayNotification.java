@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
+import android.util.Log;
 import android.widget.Toast;
 
 public class DisplayNotification extends BroadcastReceiver {
@@ -29,9 +30,11 @@ public class DisplayNotification extends BroadcastReceiver {
 
             //get notification ID passed by MainActivity
             int id = intent.getExtras().getInt("id");
+            Toast.makeText(context,Integer.toString(id),Toast.LENGTH_SHORT).show();
             //----Oh of course, have to pass on the strings again.....-----
             //initialize strings (reminder is also used for notification text)
             String message = intent.getStringExtra("message");
+            Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
             String snoozeMessage = intent.getStringExtra("snoozeMessage");
 
 
@@ -47,7 +50,7 @@ public class DisplayNotification extends BroadcastReceiver {
 
 
             PendingIntent reminderPIntent = PendingIntent
-                    .getActivity(context, 0, reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    .getActivity(context, id, reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT); //give intent unique id
 
             //intent for snooze button (action button)
             Intent actionIntent = new Intent(context, AlarmReceiver.class);
