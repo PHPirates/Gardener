@@ -360,7 +360,7 @@ public class ShowAlarm extends AppCompatActivity {
             //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
             Intent intent = new Intent(getApplicationContext(),DisplayNotification.class);
             //add the message and id
-            intent.putExtra("id",idToUpdate);
+            intent.putExtra("id", idToUpdate);
             intent.putExtra("message", message.getText().toString());
             intent.putExtra("snoozeMessage",R.string.snooze_message);
             //intent.setAction("foo"); //dummy action?

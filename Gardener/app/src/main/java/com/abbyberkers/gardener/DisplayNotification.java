@@ -30,8 +30,7 @@ public class DisplayNotification extends BroadcastReceiver {
 
             //get notification ID passed by MainActivity
             int id = intent.getExtras().getInt("id");
-            //----Oh of course, have to pass on the strings again.....-----
-            //initialize strings (reminder is also used for notification text)
+            //initialize strings (message is also used for notification text)
             String message = intent.getStringExtra("message");
             String snoozeMessage = intent.getStringExtra("snoozeMessage");
 
@@ -41,21 +40,19 @@ public class DisplayNotification extends BroadcastReceiver {
              * of ("com.garden.Reminder")... why? (otherwise the reminder text is not shown)
              */
             Intent reminderIntent = new Intent(context, AlarmReceiver.class); //(2)... and from here to receiver ...
-            reminderIntent.putExtra("id", id);
-            //pass on strings again in the intent
+            reminderIntent.putExtra("id", id); //alarm id
+            //pass on strings again in the intent, message in both intents (we always need message)
             reminderIntent.putExtra("message", message);
-            //intent.putExtra("notifyAction",snoozeMessage); //---> in different intent
-
-
+            reminderIntent.putExtra("isButton", "main");
             PendingIntent reminderPIntent = PendingIntent
                     .getActivity(context, id, reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT); //give intent unique id
 
             //intent for snooze button (action button)
             Intent actionIntent = new Intent(context, AlarmReceiver.class);
-            actionIntent.putExtra("snoozeMessage", snoozeMessage); //("STRING_I_NEED", strName)
+            actionIntent.putExtra("isButton", "action"); //("STRING_I_NEED", strName)
             //don't forget to pass the id also to the second intent
             actionIntent.putExtra("id", id);
-            actionIntent.putExtra("alarmMessage",message); //just put the message here too because we need it anyway
+            actionIntent.putExtra("message", message); //just put the message here too because we need it anyway
             PendingIntent actionPIntent = PendingIntent.getActivity(context,
                     (int) System.currentTimeMillis(), actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
