@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -106,14 +107,24 @@ public class AlarmReceiver extends AppCompatActivity {
         //get time from database and add choice of delay to it
         choice += getTimeByID();
 
+        Cursor rs = mydb.getData(idToUpdate);
+        rs.moveToFirst();
+        boolean checkRepeat = rs.getInt(
+                rs.getColumnIndex(DBHelper.ALARMS_COLUMN_REPEAT)) != 0; //get date
+        long interval = rs.getLong(rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
         //if update succeeded
         if (mydb.updateAlarm(idToUpdate, reminderMessage,
-                choice)) {
+                choice, interval, checkRepeat)) {
             Toast.makeText(getApplicationContext(), "Alarm is snoozed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
         }
 
+        //TODO redundant code set alarm: ShowAlarm
 
         //set alarm using alarmmanager
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -135,14 +146,17 @@ public class AlarmReceiver extends AppCompatActivity {
 
         PendingIntent displayIntent = PendingIntent.getBroadcast(
                 this, idToUpdate, //assign a unique id, using the database id
-                intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT TODO what why
+                intent, PendingIntent.FLAG_CANCEL_CURRENT); //instead of FLAG_UPDATE_CURRENT TODO what why
 
-
-        cancelAlarmIfExists(this, idToUpdate, intent);
-
-        //finally, set alarm
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                choice, displayIntent);
+        if (checkRepeat) {
+            //finally, set repeating alarm
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                    choice, interval, displayIntent);
+        } else {
+            //finally, set alarm
+            alarmManager.set(AlarmManager.RTC_WAKEUP,
+                    choice, displayIntent);
+        }
 
         //update textview
         this.mainTextView.setText(String.format(getResources().getString(

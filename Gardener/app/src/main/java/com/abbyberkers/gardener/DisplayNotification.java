@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.StringRes;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,7 +69,8 @@ public class DisplayNotification extends BroadcastReceiver {
                             //should be addAction(NotificationCompat.Action action)
                     .setAutoCancel(true) //to be dismissed in the Reminder activity
                     .setPriority(Notification.PRIORITY_MAX) //to show the action buttons by default
-                            // .setVibrate(new long[] {200, 600, 200, 600})
+//                             .setVibrate(new long[]{200, 600, 200, 600})`/
+//                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                     .build();
 
             NotificationManager nm = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);

@@ -71,11 +71,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return (int) DatabaseUtils.queryNumEntries(db, ALARMS_TABLE_NAME);
     }
     //TODO int vs Integer as @param?
-    public boolean updateAlarm (Integer id, String message, long date) {
+    public boolean updateAlarm (Integer id, String message, long date, long interval, boolean repeat) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", message);
         contentValues.put("date", date);
+        if(interval != 0) {
+            contentValues.put("interval", interval);
+        }
+        contentValues.put("repeat", repeat);
         db.update("alarmstable", contentValues, "id = ? ",
                 new String[] {Integer.toString(id) } );
         return true;

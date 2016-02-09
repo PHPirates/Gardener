@@ -43,16 +43,19 @@ public class ShowAlarm extends AppCompatActivity {
      * save the alarm (and send it to the phone) and a cancel (add) or delete (edit) button.
      */
     private DBHelper mydb;
-    int idToUpdate=0;
+    int idToUpdate = 0;
     EditText message;
 
-    int year,month,day,hour,minute;
+    int year, month, day, hour, minute;
     //some instance variables, handy to pass things around
     FragmentManager fm = getSupportFragmentManager();
 
     String currentDateTimeString; //instance to pass to confirmfrag
 
     int Value; //id is global, set in oncreate
+
+    long interval = 0; //interval is set in IntervalChoiceFragment
+    boolean repeat = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,7 @@ public class ShowAlarm extends AppCompatActivity {
         this.hour = c.get(Calendar.HOUR_OF_DAY);
         this.minute = c.get(Calendar.MINUTE);
 
-        message = (EditText)findViewById(R.id.messageText);
+        message = (EditText) findViewById(R.id.messageText);
 
         mydb = new DBHelper(this);
 
@@ -79,7 +82,7 @@ public class ShowAlarm extends AppCompatActivity {
 
             Value = extras.getInt("id"); //get the id to search
 
-            if (Value>0) {
+            if (Value > 0) {
                 //then we want to change an alarm and not add one
 
                 //we're in edit mode, so change instance variables to database time
@@ -107,7 +110,9 @@ public class ShowAlarm extends AppCompatActivity {
 
                 Toast.makeText(this, dataInterval + " " + repeat, Toast.LENGTH_SHORT).show();
 
-                if (!rs.isClosed()) {rs.close();} //close cursor
+                if (!rs.isClosed()) {
+                    rs.close();
+                } //close cursor
 
                 message.setText(messag); //set database text to edittext
                 //set cursor initially to the right
@@ -120,8 +125,8 @@ public class ShowAlarm extends AppCompatActivity {
                 currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
 
                 //set text on buttons
-                Button dateButton = (Button)findViewById(R.id.setDate);
-                Button timeButton = (Button)findViewById(R.id.setTime);
+                Button dateButton = (Button) findViewById(R.id.setDate);
+                Button timeButton = (Button) findViewById(R.id.setTime);
 
                 Date dateOnly = new Date(dataDate);
                 String dateString = DateFormat.getDateInstance().format(dateOnly);
@@ -133,7 +138,7 @@ public class ShowAlarm extends AppCompatActivity {
 
 
                 //if you're changing something, set a clicklistener for delete
-                Button deleteButton = (Button)findViewById(R.id.cancelButton);
+                Button deleteButton = (Button) findViewById(R.id.cancelButton);
                 deleteButton.setText(R.string.delete);
                 deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -142,7 +147,7 @@ public class ShowAlarm extends AppCompatActivity {
                         //cancel alarm as well
                         cancelAlarmIfExists();
 
-                        Intent mainIntent = new Intent(getApplicationContext(),MainActivity.class);
+                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(mainIntent);
                     }
                 });
@@ -150,12 +155,12 @@ public class ShowAlarm extends AppCompatActivity {
             } else {
 
                 //if you're adding something, set a clicklistener that cancels
-                Button cancelButton = (Button)findViewById(R.id.cancelButton);
+                Button cancelButton = (Button) findViewById(R.id.cancelButton);
                 cancelButton.setText(R.string.cancel);
                 cancelButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -169,7 +174,7 @@ public class ShowAlarm extends AppCompatActivity {
 //        Toast.makeText(getApplicationContext(), timeString,Toast.LENGTH_SHORT).show();
     }
 
-    public void showDateDialog(View view){
+    public void showDateDialog(View view) {
         //date to be sent to fragment
         DateFragment dateFragment = new DateFragment();
         Bundle bundle = new Bundle(); //bundle to be sent
@@ -192,8 +197,8 @@ public class ShowAlarm extends AppCompatActivity {
             } else {
                 //adding an alarm, current time is default
                 bundle.putInt("year", year);
-                bundle.putInt("month",month);
-                bundle.putInt("day",day);
+                bundle.putInt("month", month);
+                bundle.putInt("day", day);
             }
         }
 
@@ -235,7 +240,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     }
 
-    public long getTimeDatabase(){
+    public long getTimeDatabase() {
         //Bundle extras = getIntent().getExtras();
         //int Value = extras.getInt("id"); //get the id to search
         Cursor rs = mydb.getData(Value);
@@ -248,14 +253,14 @@ public class ShowAlarm extends AppCompatActivity {
         return dataDate;
     }
 
-    public void datePass(int y, int m, int d){
+    public void datePass(int y, int m, int d) {
         //date passed by fragment
-        this.year=y;
-        this.month=m;
-        this.day=d;
+        this.year = y;
+        this.month = m;
+        this.day = d;
         //get the others from the database, otherwise the other button gets the current time/date
         //but only when changing something...
-        if (Value>0) {
+        if (Value > 0) {
             long dataDate = getTimeDatabase();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(dataDate);
@@ -265,10 +270,10 @@ public class ShowAlarm extends AppCompatActivity {
         printTime(); //update button
     }
 
-    public void timePass(int h, int m){
-        this.hour=h;
-        this.minute=m;
-        if (Value>0) {
+    public void timePass(int h, int m) {
+        this.hour = h;
+        this.minute = m;
+        if (Value > 0) {
             long dataDate = getTimeDatabase();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(dataDate);
@@ -281,7 +286,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     public String millisToText(long m) {
         Date date = new Date(m);
-        return DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT).format(date);
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
 
     public void printTime() {
@@ -303,8 +308,8 @@ public class ShowAlarm extends AppCompatActivity {
 
         currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
 
-        Button dateButton = (Button)findViewById(R.id.setDate);
-        Button timeButton = (Button)findViewById(R.id.setTime);
+        Button dateButton = (Button) findViewById(R.id.setDate);
+        Button timeButton = (Button) findViewById(R.id.setTime);
 
         Date dateOnly = new Date(c.getTimeInMillis());
         String dateString = DateFormat.getDateInstance().format(dateOnly);
@@ -315,7 +320,7 @@ public class ShowAlarm extends AppCompatActivity {
         timeButton.setText(timeString);
     }
 
-    public long timeToInt(){
+    public long timeToInt() {
         Calendar c = Calendar.getInstance();
 
 
@@ -335,7 +340,7 @@ public class ShowAlarm extends AppCompatActivity {
          *  also sets alarm
          */
 
-        if(message.getText().toString().equals("")){
+        if (message.getText().toString().equals("")) {
             Toast.makeText(this, "Please fill in text field.", Toast.LENGTH_SHORT).show();
         } else {
 
@@ -347,14 +352,14 @@ public class ShowAlarm extends AppCompatActivity {
                 if (Value > 0) {
                     //if update succeeded
                     if (mydb.updateAlarm(idToUpdate, message.getText().toString(),
-                            time)) {
+                            time, interval, repeat)) {
                         Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (mydb.insertAlarm(message.getText().toString(),
-                            time, 60000, false)) {
+                            time, interval, repeat)) {
                         Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
@@ -385,13 +390,23 @@ public class ShowAlarm extends AppCompatActivity {
 
                 PendingIntent displayIntent = PendingIntent.getBroadcast(
                         getApplicationContext(), idToUpdate, //assign a unique id, using the database id
-                        intent, PendingIntent.FLAG_ONE_SHOT); //instead of FLAG_UPDATE_CURRENT
+                        intent, PendingIntent.FLAG_CANCEL_CURRENT); //instead of FLAG_UPDATE_CURRENT
 
-                cancelAlarmIfExists();
+//                cancelAlarmIfExists();
 
-                //finally, set alarm
-                alarmManager.set(AlarmManager.RTC_WAKEUP,
-                        time, displayIntent);
+//                //finally, set alarm
+//                alarmManager.set(AlarmManager.RTC_WAKEUP,
+//                        time, displayIntent);
+
+                if (repeat) {
+                    //finally, set repeating alarm
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                            time, interval, displayIntent);
+                } else {
+                    //finally, set alarm
+                    alarmManager.set(AlarmManager.RTC_WAKEUP,
+                            time, displayIntent);
+                }
 
 
                 //after alarm added, to back to main
@@ -402,15 +417,15 @@ public class ShowAlarm extends AppCompatActivity {
         }
     }
 
-    public void cancelAlarmIfExists(){
+    public void cancelAlarmIfExists() {
         /**
          * uses global idToUpdate
          */
-        try{
-            Intent intent = new Intent(getApplicationContext(),DisplayNotification.class);
+        try {
+            Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_ONE_SHOT);
-            AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.cancel(pendingIntent);
 
             //cancel notification if displayed, when cancel button clicked
@@ -418,17 +433,36 @@ public class ShowAlarm extends AppCompatActivity {
                     getSystemService(NOTIFICATION_SERVICE);
             nm.cancel(idToUpdate);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void checkRepeat(View view){
+    public void intervalFragment(View view) {
+        android.app.FragmentManager fm = getFragmentManager();
+        IntervalChoiceFragment intervalChoiceFragment = new IntervalChoiceFragment();
+        intervalChoiceFragment.show(fm, "Snooze me for...");
+    }
+
+    public void checkRepeat(View view) {
         CheckBox checkBox = (CheckBox) findViewById(R.id.repeatCheck);
-        if(checkBox.isChecked()){
-            Toast.makeText(this, "Checkbox is checked.", Toast.LENGTH_SHORT).show();
+        if (checkBox.isChecked()) {
+            if (interval == 0) {
+                Cursor rs = mydb.getData(Value);
+                rs.moveToFirst();
+                interval = rs.getLong(
+                        rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL)); //get date
+                if (!rs.isClosed()) {
+                    rs.close();
+                }
+            }
+
+
+            repeat = true;
+//            Toast.makeText(this, "Checkbox is checked.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Checkbox is unchecked.", Toast.LENGTH_SHORT).show();
+            repeat = false;
+//            Toast.makeText(this, "Checkbox is unchecked.", Toast.LENGTH_SHORT).show();
         }
     }
 
