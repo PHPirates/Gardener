@@ -88,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
 
         while (!res.isAfterLast()){
@@ -126,7 +126,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
 
         while (!res.isAfterLast()){
@@ -145,7 +145,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
 
         while (!res.isAfterLast()){
@@ -164,7 +164,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
 
         while (!res.isAfterLast()){

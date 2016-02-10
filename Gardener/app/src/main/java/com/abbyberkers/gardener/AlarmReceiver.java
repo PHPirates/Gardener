@@ -50,31 +50,24 @@ public class AlarmReceiver extends AppCompatActivity {
         //Log.e("Gardener","oncreate"+Integer.toString(idToUpdate));
         //get message
         reminderMessage = getIntent().getStringExtra("message");
+        String isButton = getIntent().getStringExtra("isButton");
         //assign textview to the instance variable also used in choicePass
         mainTextView = (TextView) findViewById(R.id.messageText);
 
-        //now the same for the action button from the notification
-        // TextView snoozeTextView = (TextView) findViewById(R.id.snoozeMessageText);
-        //(3).... and then get String and setText!
-        //String snoozeText = getIntent().getStringExtra("snoozeMessage"); //getString("STRING_I_NEED");
 
-        if (TextUtils.isEmpty(reminderMessage)) {
-            //if the reminder string is empty it means the snooze button was pressed
-            //display choice dialog
+        //if action (snooze) button is pressed on notification
+        if(isButton.equals("action")) {
+            //then display the snooze dialog
             showChoiceDialog(findViewById(R.id.snoozeButton));
-            mainTextView.setText(getResources().getString(
-                    R.string.snoozed_text)); //funny note: R.string.app_name is equal to getTimeByID
-
-
-        } else {
-            mainTextView.setText(String.format(getResources().getString(
-                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
         }
 
-        //TODO workaround for message not passed when snooze button hit
-        if (reminderMessage==null) {
-        //if coming via snooze action button, reminderMessage was empty so set it for other methods to use
-            reminderMessage = getIntent().getStringExtra("alarmMessage"); //the message passed with snooze intent
+        if (TextUtils.isEmpty(reminderMessage)) { //if the message is empty, show default text
+            mainTextView.setText(getResources().getString(
+                    R.string.snoozed_text)); //funny note: R.string.app_name is equal to getTimeByID
+        } else {
+            //set textview with message and time
+            mainTextView.setText(String.format(getResources().getString(
+                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
         }
 
         //This will remove the notification if the action button is pressed
