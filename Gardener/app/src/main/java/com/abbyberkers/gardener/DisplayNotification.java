@@ -31,7 +31,9 @@ public class DisplayNotification extends BroadcastReceiver {
 
             //get notification ID passed by MainActivity
             int id = intent.getExtras().getInt("id");
+
             //initialize strings (message is also used for notification text)
+
             String message = intent.getStringExtra("message");
             String snoozeMessage = intent.getStringExtra("snoozeMessage");
 
