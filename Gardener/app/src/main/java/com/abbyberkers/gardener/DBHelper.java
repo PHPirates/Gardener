@@ -15,7 +15,6 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -30,7 +29,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String ALARMS_COLUMN_DATE = "date";
     public static final String ALARMS_COLUMN_INTERVAL = "interval";
     public static final String ALARMS_COLUMN_REPEAT = "repeat";
-    private HashMap hp;
 
     public DBHelper(Context context) {
         super(context,DATABASE_NAME,null,1);
@@ -94,7 +92,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllAlarms() {
         ArrayList<String> arrayList = new ArrayList<String>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
@@ -132,7 +129,6 @@ public class DBHelper extends SQLiteOpenHelper {
          */
         ArrayList<Integer> arrayList = new ArrayList<>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
@@ -151,7 +147,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllAlarmTimes() {
         ArrayList<String> arrayList = new ArrayList<String>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
@@ -170,7 +165,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Long> getAllIntervals(){
         ArrayList<Long> arrayList = new ArrayList<>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
@@ -189,7 +183,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Boolean> getAllRepeat(){
         ArrayList<Boolean> arrayList = new ArrayList<>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
@@ -207,7 +200,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Long> getAllAlarmTimesInMillis() {
         ArrayList<Long> arrayList = new ArrayList<>();
 
-        hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from alarmstable order by date",null);
         res.moveToFirst();
