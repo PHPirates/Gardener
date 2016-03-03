@@ -26,8 +26,10 @@ import java.util.concurrent.TimeUnit;
 
 
 public class IntervalChoiceFragment extends DialogFragment implements AdapterView.OnItemClickListener {
-
-    String[] listitems = { "1 minute", "1 hour", "1 day", "1 week" };
+    /**
+     * Interval choice when adding/editing a repeating alarm in ShowAlarm
+     */
+    String[] listitems = { "Every minute", "Every hour", "Every day", "Every week" };
 
     ListView mylist;
 

@@ -54,7 +54,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     int Value; //id is global, set in oncreate
 
-    long interval = 0; //interval is set in IntervalChoiceFragment
+    long interval = 0; //interval is set in SnoozeChoiceFragment
     boolean repeat = false;
 
     @Override

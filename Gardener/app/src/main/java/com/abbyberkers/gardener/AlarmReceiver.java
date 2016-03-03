@@ -40,7 +40,6 @@ public class AlarmReceiver extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-
         /**this activity gets both strings from both intents, so that's why you need
          * to use different intents for the notification and action buttons,
          * so that when you click e.g. the action button the other string is empty.
@@ -57,7 +56,7 @@ public class AlarmReceiver extends AppCompatActivity {
 
 
         //if action (snooze) button is pressed on notification
-        if(isButton.equals("action")) {
+        if (isButton.equals("action")) {
             //then display the snooze dialog
             showChoiceDialog(findViewById(R.id.snoozeButton));
         }
@@ -93,6 +92,11 @@ public class AlarmReceiver extends AppCompatActivity {
     public void showChoiceDialog(View view) {
         FragmentManager fm = getFragmentManager();
         SnoozeChoiceFragment snoozeChoiceFragment = new SnoozeChoiceFragment();
+
+        //give the message to the fragment to show the new times in the list
+        Bundle bundle = new Bundle();
+        bundle.putLong("oldtime", getTimeByID());
+        snoozeChoiceFragment.setArguments(bundle);
         snoozeChoiceFragment.show(fm, "Snooze me for...");
     }
 
@@ -101,8 +105,6 @@ public class AlarmReceiver extends AppCompatActivity {
          * very similar to addAlarm from ShowAlarm activity
          * saves alarm into database (with the text shown) and sets alarm
          */
-
-
 
         //get time from database and add choice of delay to it
         choice += getTimeByID();
@@ -160,7 +162,7 @@ public class AlarmReceiver extends AppCompatActivity {
 
         //update textview
         this.mainTextView.setText(String.format(getResources().getString(
-                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+                R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
 
 
 //            //after alarm added, to back to main
@@ -188,7 +190,7 @@ public class AlarmReceiver extends AppCompatActivity {
     public boolean onKeyDown(int keycode, KeyEvent event) {
         if (keycode == KeyEvent.KEYCODE_BACK) {
             //on back key go to main
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         }
         return super.onKeyDown(keycode, event);

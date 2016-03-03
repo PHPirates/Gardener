@@ -18,18 +18,26 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
 public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.OnItemClickListener {
+    /**
+     * Choice the snoozing delay in the AlarmReceiver
+     */
 
-    String[] listitems = { "1 minute", "1 hour", "1 day", "1 week" };
 
     ListView mylist;
+    long minute = TimeUnit.MINUTES.toMillis(1);
+    long hour = TimeUnit.HOURS.toMillis(1);
+    long day = TimeUnit.DAYS.toMillis(1);
+    long week = TimeUnit.DAYS.toMillis(7);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,8 +55,16 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
 
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_1, listitems);
+
+        long oldTime = getArguments().getLong("oldtime"); //get old time from AlarmReceiver
+        //set listitems including additions
+        String[] listItems = { "1 minute, "+millisToText(oldTime+minute),
+                "1 hour, "+millisToText(oldTime+hour),
+                "1 day, "+millisToText(oldTime+day),
+                "1 week, "+millisToText(oldTime+week) };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, listItems);
 
         mylist.setAdapter(adapter);
 
@@ -64,13 +80,13 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
 
         long delay = 0;
         switch (position) {
-            case 0 :  delay = TimeUnit.MINUTES.toMillis(1);
+            case 0 :  delay = minute;
                 break;
-            case 1 : delay = TimeUnit.HOURS.toMillis(1);
+            case 1 : delay = hour;
                 break;
-            case 2 : delay = TimeUnit.DAYS.toMillis(1);
+            case 2 : delay = day;
                 break;
-            case 3 : delay = TimeUnit.DAYS.toMillis(7);
+            case 3 : delay = week;
                 break;
             default : Toast.makeText(getActivity(),
                     "Something went wrong selecting the delay",Toast.LENGTH_SHORT).show();
@@ -79,5 +95,9 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
         dismiss();
     }
 
+    public String millisToText(long m) {
+        Date date = new Date(m);
+        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
+    }
 
 }
