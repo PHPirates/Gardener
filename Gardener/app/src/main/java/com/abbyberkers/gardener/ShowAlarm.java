@@ -340,7 +340,10 @@ public class ShowAlarm extends AppCompatActivity {
          *  also sets alarm
          */
 
-        if (message.getText().toString().equals("")) {
+        String message = this.message.getText().toString();
+        message = message.trim();
+
+        if (message.equals("")) {
             Toast.makeText(this, "Please fill in text field.", Toast.LENGTH_SHORT).show();
         } else {
 
@@ -351,14 +354,14 @@ public class ShowAlarm extends AppCompatActivity {
                 //int Value = extras.getInt("id"); //use global value set in onCreate
                 if (Value > 0) {
                     //if update succeeded
-                    if (mydb.updateAlarm(idToUpdate, message.getText().toString(),
+                    if (mydb.updateAlarm(idToUpdate, message,
                             time, interval, repeat)) {
                         Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    if (mydb.insertAlarm(message.getText().toString(),
+                    if (mydb.insertAlarm(message,
                             time, interval, repeat)) {
                         Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     } else {
@@ -377,7 +380,7 @@ public class ShowAlarm extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
                 //add the message and id
                 intent.putExtra("id", idToUpdate);
-                intent.putExtra("message", message.getText().toString());
+                intent.putExtra("message", message);
                 intent.putExtra("snoozeMessage", R.string.snooze_message);
                 //intent.setAction("foo"); //dummy action?
 
