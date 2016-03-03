@@ -29,7 +29,7 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
     /**
      * Interval choice when adding/editing a repeating alarm in ShowAlarm
      */
-    String[] listitems = { "Every minute", "Every hour", "Every day", "Every week" };
+    String[] listitems = {"Every minute", "Every hour", "Every day", "Every week"};
 
     ListView mylist;
 
@@ -61,23 +61,25 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
-
-
-
-        long delay = 0;
+        long interval = 0;
         switch (position) {
-            case 0 :  delay = TimeUnit.MINUTES.toMillis(1);
+            case 0:
+                interval = TimeUnit.MINUTES.toMillis(1);
                 break;
-            case 1 : delay = TimeUnit.HOURS.toMillis(1);
+            case 1:
+                interval = TimeUnit.HOURS.toMillis(1);
                 break;
-            case 2 : delay = TimeUnit.DAYS.toMillis(1);
+            case 2:
+                interval = TimeUnit.DAYS.toMillis(1);
                 break;
-            case 3 : delay = TimeUnit.DAYS.toMillis(7);
+            case 3:
+                interval = TimeUnit.DAYS.toMillis(7);
                 break;
-            default : Toast.makeText(getActivity(),
-                    "Something went wrong selecting the delay",Toast.LENGTH_SHORT).show();
+            default:
+                Toast.makeText(getActivity(),
+                        "Something went wrong selecting the interval", Toast.LENGTH_SHORT).show();
         }
-        ((ShowAlarm)getActivity()).interval = delay;
+        ((ShowAlarm) getActivity()).intervalPass(interval);
         dismiss();
     }
 

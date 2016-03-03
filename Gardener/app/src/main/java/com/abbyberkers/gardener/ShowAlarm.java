@@ -35,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class ShowAlarm extends AppCompatActivity {
 
@@ -284,12 +285,76 @@ public class ShowAlarm extends AppCompatActivity {
         printTime();
     }
 
+    public void intervalPass(long interval) {
+        this.interval = interval;
+        Button intervalButton = (Button) findViewById(R.id.intervalButton);
+        intervalButton.setText(intervalToText(interval));
+    }
+
     public String millisToText(long m) {
         Date date = new Date(m);
         return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
     }
 
+    public String intervalToText(long interval) {
+        /**
+         * uses that interval is always either days, hours or minutes
+         * returns the text of the last of days, hours and minutes which is not zero.
+         */
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = interval / daysInMilli;
+        interval = interval % daysInMilli;
+
+        if (interval == 0) { //if there are elapsedDays
+            String temp = "every ";
+            if (elapsedDays != 1) { //if multiple days, add number of them
+                temp += elapsedDays + " days";
+                return temp;
+            }
+            temp += "day";
+            return temp;
+        }
+
+        long elapsedHours = interval / hoursInMilli;
+        interval = interval % hoursInMilli;
+
+        if (interval == 0) {
+            String temp = "every ";
+            if (elapsedHours != 1) {
+                temp += elapsedHours + " hours";
+                return temp;
+            }
+            temp += "hour";
+            return temp;
+        }
+
+        long elapsedMinutes = interval / minutesInMilli;
+        interval = interval % minutesInMilli;
+
+        if (interval == 0) {
+            String temp = "every ";
+            if (elapsedMinutes != 1) {
+                temp += elapsedMinutes + " minutes";
+                return temp;
+            }
+            temp += "minute";
+            return temp;
+        }
+
+
+        return "no interval";
+
+    }
+
     public void printTime() {
+        /**
+         * Print time and date on corresponding buttons
+         */
         Calendar c = Calendar.getInstance();
 
         //sets time for alarm

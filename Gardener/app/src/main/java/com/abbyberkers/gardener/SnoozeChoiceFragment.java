@@ -55,13 +55,12 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
 
         super.onActivityCreated(savedInstanceState);
 
-
         long oldTime = getArguments().getLong("oldtime"); //get old time from AlarmReceiver
         //set listitems including additions
-        String[] listItems = { "1 minute, "+millisToText(oldTime+minute),
-                "1 hour, "+millisToText(oldTime+hour),
-                "1 day, "+millisToText(oldTime+day),
-                "1 week, "+millisToText(oldTime+week) };
+        String[] listItems = {"1 minute, " + millisToText(oldTime + minute),
+                "1 hour, " + millisToText(oldTime + hour),
+                "1 day, " + millisToText(oldTime + day),
+                "1 week, " + millisToText(oldTime + week)};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, listItems);
@@ -76,22 +75,26 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
-        
 
         long delay = 0;
         switch (position) {
-            case 0 :  delay = minute;
+            case 0:
+                delay = minute;
                 break;
-            case 1 : delay = hour;
+            case 1:
+                delay = hour;
                 break;
-            case 2 : delay = day;
+            case 2:
+                delay = day;
                 break;
-            case 3 : delay = week;
+            case 3:
+                delay = week;
                 break;
-            default : Toast.makeText(getActivity(),
-                    "Something went wrong selecting the delay",Toast.LENGTH_SHORT).show();
+            default:
+                Toast.makeText(getActivity(),
+                        "Something went wrong selecting the delay", Toast.LENGTH_SHORT).show();
         }
-        ((AlarmReceiver)getActivity()).choicePass(delay);
+        ((AlarmReceiver) getActivity()).choicePass(delay);
         dismiss();
     }
 
