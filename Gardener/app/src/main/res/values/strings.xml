@@ -7,7 +7,7 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="add">Save</string>
-    <string name="interval">Interval</string>
+    <string name="interval">Not repeating</string>
     <string name="repeat">Repeat</string>
     <string name="new_alarm">New alarm</string>
     <string name="main">Save and back</string>
@@ -18,6 +18,4 @@
     <string name="default_notif">Default notification text</string>
     <string name="dontforget">Don\'t forget to %1$s at %2$s</string>
     <string name="snoozed_text">Agreed, tomorrow is another day.</string>
-
-
 </resources>

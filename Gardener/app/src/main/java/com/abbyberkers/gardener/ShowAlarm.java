@@ -55,7 +55,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     int Value; //id is global, set in oncreate
 
-    long interval = 0; //interval is set in SnoozeChoiceFragment
+    long interval = 0; //interval is set in SnoozeChoiceFragment or in oncreate
     boolean repeat = false;
 
     @Override
@@ -96,7 +96,9 @@ public class ShowAlarm extends AppCompatActivity {
                 this.hour = cal.get(Calendar.HOUR_OF_DAY);
                 this.minute = cal.get(Calendar.MINUTE);
 
-
+                /**
+                 * get stuff from database
+                 */
                 Cursor rs = mydb.getData(Value);
                 idToUpdate = Value;
                 rs.moveToFirst();
@@ -105,11 +107,9 @@ public class ShowAlarm extends AppCompatActivity {
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_MESSAGE)); //get message from database
                 long dataDate = rs.getLong(
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_DATE)); //get date
-                long dataInterval = rs.getLong(
+                interval = rs.getLong(
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL));
-                boolean repeat = rs.getInt(rs.getColumnIndex(DBHelper.ALARMS_COLUMN_REPEAT)) != 0;
-
-                Toast.makeText(this, dataInterval + " " + repeat, Toast.LENGTH_SHORT).show();
+                repeat = rs.getInt(rs.getColumnIndex(DBHelper.ALARMS_COLUMN_REPEAT)) != 0;
 
                 if (!rs.isClosed()) {
                     rs.close();
@@ -125,9 +125,17 @@ public class ShowAlarm extends AppCompatActivity {
                 //change instance variable for the confirmFragment to use
                 currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
 
-                //set text on buttons
+                /**
+                 * Set text on buttons
+                 */
                 Button dateButton = (Button) findViewById(R.id.setDate);
                 Button timeButton = (Button) findViewById(R.id.setTime);
+                Button intervalButton = (Button) findViewById(R.id.intervalButton);
+
+                if (repeat) {
+                    //set database interval on right button if editing a repeating alarm
+                    intervalButton.setText(intervalToText(interval));
+                }
 
                 Date dateOnly = new Date(dataDate);
                 String dateString = DateFormat.getDateInstance().format(dateOnly);
@@ -169,10 +177,6 @@ public class ShowAlarm extends AppCompatActivity {
                 printTime(); // print time on buttons
             }
         }
-//      // getTimeByID method debug
-//        long time = mydb.getTimeByID(idToUpdate);
-//        String timeString = millisToText(time);
-//        Toast.makeText(getApplicationContext(), timeString,Toast.LENGTH_SHORT).show();
     }
 
     public void showDateDialog(View view) {
@@ -287,6 +291,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     public void intervalPass(long interval) {
         this.interval = interval;
+        repeat = interval != 0; //if interval 0, it's not repeating, otherwise it is
         Button intervalButton = (Button) findViewById(R.id.intervalButton);
         intervalButton.setText(intervalToText(interval));
     }
@@ -301,6 +306,11 @@ public class ShowAlarm extends AppCompatActivity {
          * uses that interval is always either days, hours or minutes
          * returns the text of the last of days, hours and minutes which is not zero.
          */
+
+        if (interval ==0 ) { //if alarm is not repeating
+            return "Not repeating";
+        }
+
 
         long secondsInMilli = 1000;
         long minutesInMilli = secondsInMilli * 60;
@@ -347,7 +357,7 @@ public class ShowAlarm extends AppCompatActivity {
         }
 
 
-        return "no interval";
+        return "no interval?";
 
     }
 
@@ -510,28 +520,6 @@ public class ShowAlarm extends AppCompatActivity {
         android.app.FragmentManager fm = getFragmentManager();
         IntervalChoiceFragment intervalChoiceFragment = new IntervalChoiceFragment();
         intervalChoiceFragment.show(fm, "Snooze me for...");
-    }
-
-    public void checkRepeat(View view) {
-        CheckBox checkBox = (CheckBox) findViewById(R.id.repeatCheck);
-        if (checkBox.isChecked()) {
-            if (interval == 0) {
-                Cursor rs = mydb.getData(Value);
-                rs.moveToFirst();
-                interval = rs.getLong(
-                        rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL)); //get date
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-            }
-
-
-            repeat = true;
-//            Toast.makeText(this, "Checkbox is checked.", Toast.LENGTH_SHORT).show();
-        } else {
-            repeat = false;
-//            Toast.makeText(this, "Checkbox is unchecked.", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

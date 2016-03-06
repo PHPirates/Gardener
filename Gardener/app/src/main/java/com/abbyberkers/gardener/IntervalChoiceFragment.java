@@ -29,7 +29,7 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
     /**
      * Interval choice when adding/editing a repeating alarm in ShowAlarm
      */
-    String[] listitems = {"Every minute", "Every hour", "Every day", "Every week"};
+    String[] listitems = {"Not repeating", "Every minute", "Every hour", "Every day", "Every week"};
 
     ListView mylist;
 
@@ -64,15 +64,18 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
         long interval = 0;
         switch (position) {
             case 0:
-                interval = TimeUnit.MINUTES.toMillis(1);
+                interval = 0; //not repeating
                 break;
             case 1:
-                interval = TimeUnit.HOURS.toMillis(1);
+                interval = TimeUnit.MINUTES.toMillis(1);
                 break;
             case 2:
-                interval = TimeUnit.DAYS.toMillis(1);
+                interval = TimeUnit.HOURS.toMillis(1);
                 break;
             case 3:
+                interval = TimeUnit.DAYS.toMillis(1);
+                break;
+            case 4:
                 interval = TimeUnit.DAYS.toMillis(7);
                 break;
             default:
