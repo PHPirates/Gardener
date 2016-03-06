@@ -18,26 +18,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
-public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.OnItemClickListener {
+public class IntervalChoiceFragment extends DialogFragment implements AdapterView.OnItemClickListener {
     /**
-     * Choice the snoozing delay in the AlarmReceiver
+     * Interval choice when adding/editing a repeating alarm in ShowAlarm
      */
-
+    String[] listitems = {"Not repeating", "Every minute", "Every hour", "Every day", "Every week"};
 
     ListView mylist;
-    long minute = TimeUnit.MINUTES.toMillis(1);
-    long hour = TimeUnit.HOURS.toMillis(1);
-    long day = TimeUnit.DAYS.toMillis(1);
-    long week = TimeUnit.DAYS.toMillis(7);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,15 +49,8 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
 
         super.onActivityCreated(savedInstanceState);
 
-        long oldTime = getArguments().getLong("oldtime"); //get old time from AlarmReceiver
-        //set listitems including additions
-        String[] listItems = {"1 minute, " + millisToText(oldTime + minute),
-                "1 hour, " + millisToText(oldTime + hour),
-                "1 day, " + millisToText(oldTime + day),
-                "1 week, " + millisToText(oldTime + week)};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, listItems);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, listitems);
 
         mylist.setAdapter(adapter);
 
@@ -74,33 +61,30 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
-
-
-        long delay = 0;
+        long interval = 0;
         switch (position) {
             case 0:
-                delay = minute;
+                interval = 0; //not repeating
                 break;
             case 1:
-                delay = hour;
+                interval = TimeUnit.MINUTES.toMillis(1);
                 break;
             case 2:
-                delay = day;
+                interval = TimeUnit.HOURS.toMillis(1);
                 break;
             case 3:
-                delay = week;
+                interval = TimeUnit.DAYS.toMillis(1);
+                break;
+            case 4:
+                interval = TimeUnit.DAYS.toMillis(7);
                 break;
             default:
                 Toast.makeText(getActivity(),
-                        "Something went wrong selecting the delay", Toast.LENGTH_SHORT).show();
+                        "Something went wrong selecting the interval", Toast.LENGTH_SHORT).show();
         }
-        ((AlarmReceiver) getActivity()).choicePass(delay);
+        ((ShowAlarm) getActivity()).intervalPass(interval);
         dismiss();
     }
 
-    public String millisToText(long m) {
-        Date date = new Date(m);
-        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
-    }
 
 }

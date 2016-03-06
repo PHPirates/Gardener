@@ -58,12 +58,12 @@
                 android:text="@string/cancel"
                 />
             <Button
-                android:id="@+id/addButton"
+                android:id="@+id/intervalButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:onClick="addAlarm"
-                android:text="@string/add"
+                android:text="@string/interval"
+                android:onClick="intervalFragment"
                 />
         </TableRow>
     </TableLayout>
