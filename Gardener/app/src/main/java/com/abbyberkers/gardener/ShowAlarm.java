@@ -409,7 +409,7 @@ public class ShowAlarm extends AppCompatActivity {
         return c.getTimeInMillis();
     }
 
-    public void addAlarm(View view) {
+    public void addAlarm() {
         /**
          * when save button clicked
          *  also sets alarm
@@ -533,7 +533,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        addAlarm(findViewById(R.id.addButton)); //also save, view passed = button
+        addAlarm(); //also save, view passed = button
         return true;
     }
 
