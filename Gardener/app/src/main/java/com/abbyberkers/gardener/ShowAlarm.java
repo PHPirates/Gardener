@@ -245,9 +245,10 @@ public class ShowAlarm extends AppCompatActivity {
 
     }
 
+    /**
+     * @return time from database corresponding to id in Value
+     */
     public long getTimeDatabase() {
-        //Bundle extras = getIntent().getExtras();
-        //int Value = extras.getInt("id"); //get the id to search
         Cursor rs = mydb.getData(Value);
         rs.moveToFirst();
         long dataDate = rs.getLong(
