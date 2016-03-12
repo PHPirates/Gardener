@@ -533,7 +533,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        addAlarm(); //also save, view passed = button
+        addAlarm(); //also save
         return true;
     }
 
