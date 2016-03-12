@@ -259,8 +259,13 @@ public class ShowAlarm extends AppCompatActivity {
         return dataDate;
     }
 
+    /**
+     * On date passed by fragment
+     * @param y year
+     * @param m month
+     * @param d day
+     */
     public void datePass(int y, int m, int d) {
-        //date passed by fragment
         this.year = y;
         this.month = m;
         this.day = d;
