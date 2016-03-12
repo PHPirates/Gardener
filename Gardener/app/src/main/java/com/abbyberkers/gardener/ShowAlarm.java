@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 public class ShowAlarm extends AppCompatActivity {
 
     /**
+     * This is an online edit.
      * Class to add a new alarm or edit an existing alarm. Contains buttons to set time and date,
      * save the alarm (and send it to the phone) and a cancel (add) or delete (edit) button.
      */
