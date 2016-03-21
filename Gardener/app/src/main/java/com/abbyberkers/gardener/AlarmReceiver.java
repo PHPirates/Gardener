@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -96,7 +95,6 @@ public class AlarmReceiver extends AppCompatActivity {
 
         //give the message to the fragment to show the new times in the list
         Bundle bundle = new Bundle();
-        bundle.putLong("oldtime", getTimeByID());
         snoozeChoiceFragment.setArguments(bundle);
         snoozeChoiceFragment.show(fm, "Snooze me for...");
     }
@@ -107,8 +105,10 @@ public class AlarmReceiver extends AppCompatActivity {
          * saves alarm into database (with the text shown) and sets alarm
          */
 
-        //get time from database and add choice of delay to it
-        choice += getTimeByID();
+        //get current time instead of time from database,
+        // because snoozing should be from current time
+        // and add choice of delay to it
+        choice += System.currentTimeMillis();
 
         Cursor rs = mydb.getData(idToUpdate);
         rs.moveToFirst();
@@ -126,10 +126,6 @@ public class AlarmReceiver extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
         }
-
-        /**
-         * NOTE same code as in ShowAlarm.addAlarm
-         */
 
         //set alarm using alarmmanager
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);

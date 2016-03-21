@@ -443,10 +443,6 @@ public class ShowAlarm extends AppCompatActivity {
                     //Log.e("G",Integer.toString(idToUpdate));
                 }
 
-                /**
-                 * NOTE same code as in {@link AlarmReceiver.choicePass}
-                 */
-
                 //set alarm using alarmmanager
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 //intent to DisplayNotification

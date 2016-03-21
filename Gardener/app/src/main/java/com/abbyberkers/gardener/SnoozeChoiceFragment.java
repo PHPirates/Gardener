@@ -43,12 +43,13 @@ public class SnoozeChoiceFragment extends DialogFragment implements AdapterView.
 
         super.onActivityCreated(savedInstanceState);
 
-        long oldTime = getArguments().getLong("oldtime"); //get old time from AlarmReceiver
+        //get current time to add the delay to
+        long now = System.currentTimeMillis();
         //set list items including additions
-        String[] listItems = {"1 minute, " + millisToText(oldTime + minute),
-                "1 hour, " + millisToText(oldTime + hour),
-                "1 day, " + millisToText(oldTime + day),
-                "1 week, " + millisToText(oldTime + week)};
+        String[] listItems = {"1 minute, " + millisToText(now + minute),
+                "1 hour, " + millisToText(now + hour),
+                "1 day, " + millisToText(now + day),
+                "1 week, " + millisToText(now + week)};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, listItems);
