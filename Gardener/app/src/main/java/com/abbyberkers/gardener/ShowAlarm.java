@@ -7,56 +7,40 @@ package com.abbyberkers.gardener;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class ShowAlarm extends AppCompatActivity {
 
+    int idToUpdate = 0;
+    EditText message;
+    int year, month, day, hour, minute;
+    //some instance variables, handy to pass things around
+    FragmentManager fm = getSupportFragmentManager();
+    String currentDateTimeString; //instance to pass to confirmfrag
+    int Value; //id is global, set in oncreate
+    long interval = 0; //interval is set in SnoozeChoiceFragment or in oncreate
+    boolean repeat = false;
     /**
      * Class to add a new alarm or edit an existing alarm. Contains buttons to set time and date,
      * save the alarm (and send it to the phone) and a cancel (add) or delete (edit) button.
      */
     private DBHelper mydb;
-    int idToUpdate = 0;
-    EditText message;
-
-    int year, month, day, hour, minute;
-    //some instance variables, handy to pass things around
-    FragmentManager fm = getSupportFragmentManager();
-
-    String currentDateTimeString; //instance to pass to confirmfrag
-
-    int Value; //id is global, set in oncreate
-
-    long interval = 0; //interval is set in SnoozeChoiceFragment or in oncreate
-    boolean repeat = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -261,6 +245,7 @@ public class ShowAlarm extends AppCompatActivity {
 
     /**
      * On date passed by fragment
+     *
      * @param y year
      * @param m month
      * @param d day
@@ -302,10 +287,10 @@ public class ShowAlarm extends AppCompatActivity {
         intervalButton.setText(intervalToText(interval));
     }
 
-    public String millisToText(long m) {
-        Date date = new Date(m);
-        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
-    }
+//    public String millisToText(long m) {
+//        Date date = new Date(m);
+//        return DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(date);
+//    }
 
     public String intervalToText(long interval) {
         /**
@@ -313,7 +298,7 @@ public class ShowAlarm extends AppCompatActivity {
          * returns the text of the last of days, hours and minutes which is not zero.
          */
 
-        if (interval ==0 ) { //if alarm is not repeating
+        if (interval == 0) { //if alarm is not repeating
             return "Not repeating";
         }
 
@@ -437,50 +422,53 @@ public class ShowAlarm extends AppCompatActivity {
                     //if update succeeded
                     if (mydb.updateAlarm(idToUpdate, message,
                             time, interval, repeat)) {
-                        Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Updated", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "not Updated", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if (mydb.insertAlarm(message,
                             time, interval, repeat)) {
                         Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "not done", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "not done", Toast.LENGTH_SHORT).show();
                     }
-                    List<Integer> listID = mydb.getAllAlarmIDs(); //id to pass via notification also has to be set!
+                    //id to pass via notification also has to be set!
+                    List<Integer> listID = mydb.getAllAlarmIDs();
                     //id is the last added, so the last element of ListID
                     idToUpdate = listID.get(listID.size() - 1);
                     //Log.e("G",Integer.toString(idToUpdate));
                 }
 
+                /**
+                 * NOTE same code as in {@link AlarmReceiver.choicePass}
+                 */
+
                 //set alarm using alarmmanager
                 AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
                 //intent to DisplayNotification
-                //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
                 Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
                 //add the message and id
                 intent.putExtra("id", idToUpdate);
                 intent.putExtra("message", message);
                 intent.putExtra("snoozeMessage", R.string.snooze_message);
-                //intent.setAction("foo"); //dummy action?
 
-                /** set the flags so the mainactivity isn't started when the notification is triggered
-                 * use new task to put the displaynotif in a new task, and multiple task so it doesn't
-                 * interfere with the main task. This way, the backstack of that main task isn't desturbed(?)
-                 * and when you hit the back button when in reminder activity you go back to your last page(?)
+                /** set the flags so the mainactivity isn't started when the notification is
+                 * triggered use new task to put the displaynotif in a new task, and multiple task
+                 * so it doesn't interfere with the main task. This way, the backstack of that
+                 * main task isn't disturbed(?) and when you hit the back button when in
+                 * reminder activity you go back to your last page(?)
                  */
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
                 PendingIntent displayIntent = PendingIntent.getBroadcast(
-                        getApplicationContext(), idToUpdate, //assign a unique id, using the database id
-                        intent, PendingIntent.FLAG_CANCEL_CURRENT); //instead of FLAG_UPDATE_CURRENT
-
-//                cancelAlarmIfExists();
-
-//                //finally, set alarm
-//                alarmManager.set(AlarmManager.RTC_WAKEUP,
-//                        time, displayIntent);
+                        //assign a unique id, using the database id
+                        getApplicationContext(), idToUpdate,
+                        //instead of FLAG_UPDATE_CURRENT:
+                        intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
                 if (repeat) {
                     //finally, set repeating alarm
@@ -491,7 +479,6 @@ public class ShowAlarm extends AppCompatActivity {
                     alarmManager.set(AlarmManager.RTC_WAKEUP,
                             time, displayIntent);
                 }
-
 
                 //after alarm added, to back to main
                 Intent mainIntent = new Intent(getApplicationContext(),

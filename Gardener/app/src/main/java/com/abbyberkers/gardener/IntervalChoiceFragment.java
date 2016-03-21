@@ -1,13 +1,7 @@
 package com.abbyberkers.gardener;
 
 import android.app.DialogFragment;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -37,7 +26,7 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.choice_fragment, null, false);
+        View view = inflater.inflate(R.layout.choice_fragment, container, false);
         mylist = (ListView) view.findViewById(R.id.list);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -49,7 +38,7 @@ public class IntervalChoiceFragment extends DialogFragment implements AdapterVie
 
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, listitems);
 
         mylist.setAdapter(adapter);

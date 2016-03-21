@@ -9,10 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,15 +21,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * Main activity, displays a ListView of all the alarms
-     */
-    private ListView obj;
     DBHelper mydb;
 
     @Override
@@ -56,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         if (arrayList.isEmpty()) { //default
             arrayList.add("You have no alarms");
             timesList.add("");
-            isEmpty=true;
+            isEmpty = true;
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
@@ -64,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 //no idea why this works, but it seems to.
                 // it also seems to catch if messages disappear from database/listview
-                LayoutInflater inflater = (LayoutInflater)getApplicationContext().
-                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) getApplicationContext().
+                        getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 if (convertView == null) {
                     //if there's no view yet, create it
-                    convertView = inflater.inflate(android.R.layout.simple_list_item_2,parent,false);
+                    convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
                 }
 
                 //View view = super.getView(position, convertView, parent); // throws NPE sometimes
@@ -81,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
                 return convertView;
             }
         };
-        obj = (ListView) findViewById(R.id.listView1); //set obj to listview
+        /*
+      Main activity, displays a ListView of all the alarms
+     */
+        ListView obj = (ListView) findViewById(R.id.listView1);
         obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
 
 

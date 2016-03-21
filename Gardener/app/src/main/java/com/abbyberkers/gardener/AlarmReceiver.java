@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -62,12 +61,14 @@ public class AlarmReceiver extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(reminderMessage)) { //if the message is empty, show default text
+            //funny note: R.string.app_name is equal to getTimeByID
             mainTextView.setText(getResources().getString(
-                    R.string.snoozed_text)); //funny note: R.string.app_name is equal to getTimeByID
+                    R.string.snoozed_text));
         } else {
             //set textview with message and time
             mainTextView.setText(String.format(getResources().getString(
-                    R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+                            R.string.dontforget),
+                    reminderMessage, millisToText(getTimeByID())));
         }
 
         //This will remove the notification if the action button is pressed
@@ -126,29 +127,30 @@ public class AlarmReceiver extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "not Updated", Toast.LENGTH_SHORT).show();
         }
 
-        //TODO redundant code set alarm: ShowAlarm
+        /**
+         * NOTE same code as in ShowAlarm.addAlarm
+         */
 
         //set alarm using alarmmanager
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         //intent to DisplayNotification
-        //Intent intent = new Intent("com.abbyberkers.DisplayNotification");
         Intent intent = new Intent(this, DisplayNotification.class);
         //add the message and id
         intent.putExtra("id", idToUpdate);
         intent.putExtra("message", reminderMessage);
         intent.putExtra("snoozeMessage", R.string.snooze_message);
-        //intent.setAction("foo"); //dummy action?
 
-        /** set the flags so the mainactivity isn't started when the notification is triggered
-         * use new task to put the displaynotif in a new task, and multiple task so it doesn't
-         * interfere with the main task. This way, the backstack of that main task isn't desturbed(?)
-         * and when you hit the back button when in reminder activity you go back to your last page(?)
+        /** set the flags so the mainactivity isn't started when the notification is
+         * triggered use new task to put the displaynotif in a new task, and multiple task
+         * so it doesn't interfere with the main task. This way, the backstack of that
+         * main task isn't disturbed(?) and when you hit the back button when in
+         * reminder activity you go back to your last page(?)
          */
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
         PendingIntent displayIntent = PendingIntent.getBroadcast(
                 this, idToUpdate, //assign a unique id, using the database id
-                intent, PendingIntent.FLAG_CANCEL_CURRENT); //instead of FLAG_UPDATE_CURRENT TODO what why
+                intent, PendingIntent.FLAG_CANCEL_CURRENT); //instead of FLAG_UPDATE_CURRENT
 
         if (checkRepeat) {
             //finally, set repeating alarm
@@ -162,7 +164,8 @@ public class AlarmReceiver extends AppCompatActivity {
 
         //update textview
         this.mainTextView.setText(String.format(getResources().getString(
-                R.string.dontforget), reminderMessage, millisToText(getTimeByID())));
+                        R.string.dontforget),
+                reminderMessage, millisToText(getTimeByID())));
 
 
 //            //after alarm added, to back to main
@@ -170,16 +173,6 @@ public class AlarmReceiver extends AppCompatActivity {
 //                    MainActivity.class);
 //            startActivity(mainIntent);
 
-    }
-
-    public void cancelAlarmIfExists(Context mContext, int id, Intent intent) {
-        try {
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, id, intent, 0);
-            AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-            am.cancel(pendingIntent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public String millisToText(long m) {

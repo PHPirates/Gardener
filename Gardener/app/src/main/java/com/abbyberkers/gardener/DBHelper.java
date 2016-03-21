@@ -7,11 +7,9 @@ package com.abbyberkers.gardener;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +21,6 @@ public class DBHelper extends SQLiteOpenHelper {
      * like add, delete, edit accessible by methods.
      */
     public static final String DATABASE_NAME = "Alarms.db";
-    public static final String ALARMS_TABLE_NAME = "alarmstable";
     public static final String ALARMS_COLUMN_ID = "id";
     public static final String ALARMS_COLUMN_MESSAGE = "message";
     public static final String ALARMS_COLUMN_DATE = "date";
@@ -31,7 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String ALARMS_COLUMN_REPEAT = "repeat";
 
     public DBHelper(Context context) {
-        super(context,DATABASE_NAME,null,1);
+        super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
@@ -48,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertAlarm (String message, long date, long interval, boolean repeat) {
+    public boolean insertAlarm(String message, long date, long interval, boolean repeat) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", message);
@@ -61,47 +58,42 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery( "select * from alarmstable where id="+id+"", null);
+        return db.rawQuery("select * from alarmstable where id=" + id + "", null);
     }
 
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, ALARMS_TABLE_NAME);
-    }
-    //TODO int vs Integer as @param?
-    public boolean updateAlarm (Integer id, String message, long date, long interval, boolean repeat) {
+    public boolean updateAlarm(int id, String message, long date, long interval, boolean repeat) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", message);
         contentValues.put("date", date);
-        if(interval != 0) {
+        if (interval != 0) {
             contentValues.put("interval", interval);
         }
         contentValues.put("repeat", repeat);
         db.update("alarmstable", contentValues, "id = ? ",
-                new String[] {Integer.toString(id) } );
+                new String[]{Integer.toString(id)});
         return true;
     }
 
-    public Integer deleteAlarm (Integer id) {
+    public Integer deleteAlarm(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete("alarmstable", "id = ? ",
-                new String[] {Integer.toString(id)});
+                new String[]{Integer.toString(id)});
     }
 
     public ArrayList<String> getAllAlarms() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
 
-        while (!res.isAfterLast()){
+        while (!res.isAfterLast()) {
             String listItem = res.getString(
                     res.getColumnIndex(ALARMS_COLUMN_MESSAGE));
-            if ((listItem!=null)&&listItem.length()>25) { //listItem can be empty?
-                String cutString = listItem.substring(0,25);
-                listItem = cutString+"...";
+            if ((listItem != null) && listItem.length() > 25) { //listItem can be empty?
+                String cutString = listItem.substring(0, 25);
+                listItem = cutString + "...";
             }
             arrayList.add(listItem);
             res.moveToNext();
@@ -111,17 +103,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    //TODO get time by id method (debug in showalarm)
-//    public long getTimeByID (int id) {
-//        long time;
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor res = db.rawQuery("select * from alarmstable WHERE id="+Integer.toString(id), null);
-//        res.moveToFirst();
-//        time = res.getInt(res.getColumnIndex(ALARMS_COLUMN_DATE));
-//        res.close();
-//        return time;
-//    }
-
     public ArrayList<Integer> getAllAlarmIDs() {
         /**
          * Return all ID's in an array, so in MainActivity we can use both this array and the
@@ -130,10 +111,10 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Integer> arrayList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
 
-        while (!res.isAfterLast()){
+        while (!res.isAfterLast()) {
             int listItem = res.getInt(
                     res.getColumnIndex(ALARMS_COLUMN_ID));
             arrayList.add(listItem);
@@ -145,13 +126,13 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<String> getAllAlarmTimes() {
-        ArrayList<String> arrayList = new ArrayList<String>();
+        ArrayList<String> arrayList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
 
-        while (!res.isAfterLast()){
+        while (!res.isAfterLast()) {
             Long listItem = res.getLong(
                     res.getColumnIndex(ALARMS_COLUMN_DATE));
             arrayList.add(millisToText(listItem));
@@ -162,49 +143,49 @@ public class DBHelper extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public ArrayList<Long> getAllIntervals(){
-        ArrayList<Long> arrayList = new ArrayList<>();
+//    public ArrayList<Long> getAllIntervals(){
+//        ArrayList<Long> arrayList = new ArrayList<>();
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
+//        res.moveToFirst();
+//
+//        while (!res.isAfterLast()){
+//            Long listItem = res.getLong(
+//                    res.getColumnIndex(ALARMS_COLUMN_INTERVAL));
+//            arrayList.add(listItem);
+//            res.moveToNext();
+//        }
+//
+//        res.close();
+//        return arrayList;
+//    }
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
-        res.moveToFirst();
-
-        while (!res.isAfterLast()){
-            Long listItem = res.getLong(
-                    res.getColumnIndex(ALARMS_COLUMN_INTERVAL));
-            arrayList.add(listItem);
-            res.moveToNext();
-        }
-
-        res.close();
-        return arrayList;
-    }
-
-    public ArrayList<Boolean> getAllRepeat(){
-        ArrayList<Boolean> arrayList = new ArrayList<>();
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
-        res.moveToFirst();
-
-        while (!res.isAfterLast()){
-            Boolean listItem = res.getInt(res.getColumnIndex(ALARMS_COLUMN_REPEAT)) != 0;
-            arrayList.add(listItem);
-            res.moveToNext();
-        }
-
-        res.close();
-        return arrayList;
-    }
+//    public ArrayList<Boolean> getAllRepeat(){
+//        ArrayList<Boolean> arrayList = new ArrayList<>();
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
+//        res.moveToFirst();
+//
+//        while (!res.isAfterLast()){
+//            Boolean listItem = res.getInt(res.getColumnIndex(ALARMS_COLUMN_REPEAT)) != 0;
+//            arrayList.add(listItem);
+//            res.moveToNext();
+//        }
+//
+//        res.close();
+//        return arrayList;
+//    }
 
     public ArrayList<Long> getAllAlarmTimesInMillis() {
         ArrayList<Long> arrayList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from alarmstable order by date",null);
+        Cursor res = db.rawQuery("select * from alarmstable order by date", null);
         res.moveToFirst();
 
-        while (!res.isAfterLast()){
+        while (!res.isAfterLast()) {
             Long listItem = res.getLong(
                     res.getColumnIndex(ALARMS_COLUMN_DATE));
             arrayList.add(listItem);
@@ -214,7 +195,6 @@ public class DBHelper extends SQLiteOpenHelper {
         res.close();
         return arrayList;
     }
-
 
 
     public String millisToText(long m) {

@@ -4,22 +4,22 @@ package com.abbyberkers.gardener;
  * @coauthor Abby
  */
 
-
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.Dialog;
 import android.widget.DatePicker;
-
-import java.util.Calendar;
 
 public class DateFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
         // Use the current date as the default date in the picker
         int year = getArguments().getInt("year"); //use the already chosen date from Main
         int month = getArguments().getInt("month");
