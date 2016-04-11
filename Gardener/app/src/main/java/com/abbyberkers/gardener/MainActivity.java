@@ -5,12 +5,16 @@ package com.abbyberkers.gardener;
  * Abby's branch
  */
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //super.onResume();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<Integer> arrayListID = mydb.getAllAlarmIDs();
         //also get all id's so the first id in the array corresponds with the first message in the
         //other array
-//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
-//                android.R.layout.simple_list_item_1, arrayList);
 
         boolean isEmpty = false;
         if (arrayList.isEmpty()) { //default
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         ListView obj = (ListView) findViewById(R.id.listView1);
         obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
 
-
         if (!isEmpty) { //only set clicklistener if there are alarms
             //set clicklistener for items in the listview
             obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,6 +98,37 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), ShowAlarm.class);
                     intent.putExtras(dataBundle);
                     startActivity(intent);
+                }
+            });
+            obj.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(
+                            MainActivity.this);
+                    alert.setTitle("Delete alarm");
+                    alert.setMessage("Are you sure?");
+                    alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do your work here
+                            dialog.dismiss();
+
+                        }
+                    });
+                    alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alert.show();
+
+                    return true;
                 }
             });
 
