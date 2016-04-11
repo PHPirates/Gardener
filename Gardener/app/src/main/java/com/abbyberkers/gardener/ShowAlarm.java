@@ -400,12 +400,11 @@ public class ShowAlarm extends AppCompatActivity {
         return c.getTimeInMillis();
     }
 
+    /**
+     * when save button clicked
+     *  also sets alarm
+     */
     public void addAlarm() {
-        /**
-         * when save button clicked
-         *  also sets alarm
-         */
-
         String message = this.message.getText().toString();
         message = message.trim();
 
@@ -415,9 +414,7 @@ public class ShowAlarm extends AppCompatActivity {
 
             Bundle extras = getIntent().getExtras();
             long time = timeToInt(); //get chosen (or otherwise current) time in millis
-            //Toast.makeText(getApplicationContext(),millisToText(time),Toast.LENGTH_SHORT).show();
             if (extras != null) {
-                //int Value = extras.getInt("id"); //use global value set in onCreate
                 if (Value > 0) {
                     //if update succeeded
                     if (mydb.updateAlarm(idToUpdate, message,
@@ -440,7 +437,6 @@ public class ShowAlarm extends AppCompatActivity {
                     List<Integer> listID = mydb.getAllAlarmIDs();
                     //id is the last added, so the last element of ListID
                     idToUpdate = listID.get(listID.size() - 1);
-                    //Log.e("G",Integer.toString(idToUpdate));
                 }
 
                 //set alarm using alarmmanager

@@ -56,6 +56,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    /**
+     * select row by id
+     * @param id id to search for
+     * @return cursor pointed at that row
+     */
     public Cursor getData(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("select * from alarmstable where id=" + id + "", null);
