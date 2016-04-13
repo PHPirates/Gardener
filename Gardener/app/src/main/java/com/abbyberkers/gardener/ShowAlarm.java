@@ -64,7 +64,7 @@ public class ShowAlarm extends AppCompatActivity {
         mydb = new DBHelper(this);
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) { //if there's something in the bundle
+        if (extras != null) { //if there's something in the bundle gotten from main activity
 
             Value = extras.getInt("id"); //get the id to search
 
@@ -90,8 +90,8 @@ public class ShowAlarm extends AppCompatActivity {
 
                 String messag = rs.getString(
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_MESSAGE)); //get message from database
-                long dataDate = rs.getLong(
-                        rs.getColumnIndex(DBHelper.ALARMS_COLUMN_DATE)); //get date
+//                long time = rs.getLong(
+//                        rs.getColumnIndex(DBHelper.ALARMS_COLUMN_DATE)); //get date
                 interval = rs.getLong(
                         rs.getColumnIndex(DBHelper.ALARMS_COLUMN_INTERVAL));
                 repeat = rs.getInt(rs.getColumnIndex(DBHelper.ALARMS_COLUMN_REPEAT)) != 0;
@@ -105,7 +105,7 @@ public class ShowAlarm extends AppCompatActivity {
                 message.setSelection(message.length());
 
                 //convert long to string
-                Date date = new Date(dataDate);
+                Date date = new Date(time);
                 //format the date to a string using the local date time formatting
                 //change instance variable for the confirmFragment to use
                 currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
@@ -122,11 +122,11 @@ public class ShowAlarm extends AppCompatActivity {
                     intervalButton.setText(intervalToText(interval));
                 }
 
-                Date dateOnly = new Date(dataDate);
+                Date dateOnly = new Date(time);
                 String dateString = DateFormat.getDateInstance().format(dateOnly);
                 dateButton.setText(dateString);
 
-                Date timeOnly = new Date(dataDate);
+                Date timeOnly = new Date(time);
                 String timeString = DateFormat.getTimeInstance().format(timeOnly);
                 timeButton.setText(timeString);
 
@@ -252,32 +252,17 @@ public class ShowAlarm extends AppCompatActivity {
      * @param d day
      */
     public void datePass(int y, int m, int d) {
+        //update instance variables
         this.year = y;
         this.month = m;
         this.day = d;
-        //get the others from the database, otherwise the other button gets the current time/date
-        //but only when changing something...
-        if (Value > 0) {
-            long dataDate = getTimeDatabase();
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(dataDate);
-            this.hour = c.get(Calendar.HOUR_OF_DAY);
-            this.minute = c.get(Calendar.MINUTE);
-        }
         printTime(); //update button
     }
 
     public void timePass(int h, int m) {
+        //update instance variables
         this.hour = h;
         this.minute = m;
-        if (Value > 0) {
-            long dataDate = getTimeDatabase();
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(dataDate);
-            this.year = c.get(Calendar.YEAR);
-            this.month = c.get(Calendar.MONTH);
-            this.day = c.get(Calendar.DAY_OF_MONTH);
-        }
         printTime();
     }
 
