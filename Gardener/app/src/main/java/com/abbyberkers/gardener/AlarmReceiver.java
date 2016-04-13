@@ -162,13 +162,6 @@ public class AlarmReceiver extends AppCompatActivity {
         this.mainTextView.setText(String.format(getResources().getString(
                         R.string.dontforget),
                 reminderMessage, millisToText(getTimeByID())));
-
-
-//            //after alarm added, to back to main
-//            Intent mainIntent = new Intent(getApplicationContext(),
-//                    MainActivity.class);
-//            startActivity(mainIntent);
-
     }
 
     public String millisToText(long m) {
