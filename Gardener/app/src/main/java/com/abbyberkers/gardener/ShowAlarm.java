@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -480,14 +481,14 @@ public class ShowAlarm extends AppCompatActivity {
         }
     }
 
+    /**
+     * uses global idToUpdate
+     */
     public void cancelAlarmIfExists() {
-        /**
-         * uses global idToUpdate
-         */
         try {
             Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_ONE_SHOT);
+                    getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
             am.cancel(pendingIntent);
 
