@@ -2,7 +2,6 @@ package com.abbyberkers.gardener;
 /**
  * @author Thomas
  * @coauthor Abby
- * Abby's branch
  */
 
 import android.app.Activity;
@@ -33,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     DBHelper mydb;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +40,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mydb = new DBHelper(this);
         //make an object of the DBHelper class so we can use its methods
+        mydb = new DBHelper(this);
+
+        //also get all id's so the first id in the array corresponds with the first message in the
+        //other array
         final List<String> arrayList = mydb.getAllAlarms();
         final List<String> timesList = mydb.getAllAlarmTimes();
         final ArrayList<Integer> arrayListID = mydb.getAllAlarmIDs();
-        //also get all id's so the first id in the array corresponds with the first message in the
-        //other array
 
         boolean isEmpty = false;
         if (arrayList.isEmpty()) { //default
@@ -55,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
             isEmpty = true;
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
+        //initialise arrayadapter to show stuff in the listview
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_list_item_2, android.R.id.text1, arrayList) {
             public View getView(int position, View convertView, ViewGroup parent) {
                 //no idea why this works, but it seems to.
@@ -80,12 +82,12 @@ public class MainActivity extends AppCompatActivity {
         /*
       Main activity, displays a ListView of all the alarms
      */
-        ListView obj = (ListView) findViewById(R.id.listView1);
-        obj.setAdapter(arrayAdapter); //set our custom adapter to the listview
+        final ListView listView = (ListView) findViewById(R.id.listView1);
+        listView.setAdapter(arrayAdapter); //set our custom adapter to the listview
 
         if (!isEmpty) { //only set clicklistener if there are alarms
             //set clicklistener for items in the listview
-            obj.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     //what id do we need to search in the database
@@ -100,10 +102,14 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-            obj.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
+                    //first, find the corresponding database id
+                    final int idToDelete = arrayListID.get(position);
+
+                    //show dialog
                     AlertDialog.Builder alert = new AlertDialog.Builder(
                             MainActivity.this);
                     alert.setTitle("Delete alarm");
@@ -112,7 +118,12 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //do your work here
+                            //remove item from arrayAdapter and thus immediately from the listView
+                            arrayAdapter.remove(arrayAdapter.getItem(position));
+                            mydb.deleteAlarm(idToDelete);
+                            //cancel alarm as well
+                            ShowAlarm.cancelAlarmIfExists(getApplicationContext(), idToDelete);
+
                             dialog.dismiss();
 
                         }
@@ -121,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                             dialog.dismiss();
                         }
                     });

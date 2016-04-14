@@ -7,6 +7,7 @@ package com.abbyberkers.gardener;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
@@ -139,7 +140,7 @@ public class ShowAlarm extends AppCompatActivity {
                     public void onClick(View v) {
                         mydb.deleteAlarm(idToUpdate);
                         //cancel alarm as well
-                        cancelAlarmIfExists();
+                        cancelAlarmIfExists(getApplicationContext(),idToUpdate);
 
                         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(mainIntent);
@@ -468,19 +469,20 @@ public class ShowAlarm extends AppCompatActivity {
 
     /**
      * uses global idToUpdate
+     * is static so it can be reused in the long press listener in main activity
      */
-    public void cancelAlarmIfExists() {
+    public static void cancelAlarmIfExists(Context context, int id) {
         try {
-            Intent intent = new Intent(getApplicationContext(), DisplayNotification.class);
+            Intent intent = new Intent(context, DisplayNotification.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), idToUpdate, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                    context, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager am = (AlarmManager) context.getSystemService(ALARM_SERVICE);
             am.cancel(pendingIntent);
 
             //cancel notification if displayed, when cancel button clicked
             NotificationManager nm = (NotificationManager)
-                    getSystemService(NOTIFICATION_SERVICE);
-            nm.cancel(idToUpdate);
+                    context.getSystemService(NOTIFICATION_SERVICE);
+            nm.cancel(id);
 
         } catch (Exception e) {
             e.printStackTrace();
