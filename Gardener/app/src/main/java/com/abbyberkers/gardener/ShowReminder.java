@@ -1,19 +1,14 @@
 package com.abbyberkers.gardener;
-/**
- * @author Thomas
- * @coauthor Abby
- */
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +21,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ShowAlarm extends AppCompatActivity {
+public class ShowReminder extends AppCompatActivity {
 
     int idToUpdate = 0;
     EditText message;
-    int year, month, day, hour, minute;
+    int year, month, day;
     //some instance variables, handy to pass things around
     FragmentManager fm = getSupportFragmentManager();
     String currentDateTimeString; //instance to pass to confirmfrag
@@ -46,7 +41,7 @@ public class ShowAlarm extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_alarm);
+        setContentView(R.layout.activity_show_reminder);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,8 +51,6 @@ public class ShowAlarm extends AppCompatActivity {
         this.year = c.get(Calendar.YEAR);
         this.month = c.get(Calendar.MONTH);
         this.day = c.get(Calendar.DAY_OF_MONTH);
-        this.hour = c.get(Calendar.HOUR_OF_DAY);
-        this.minute = c.get(Calendar.MINUTE);
 
         message = (EditText) findViewById(R.id.messageText);
 
@@ -78,8 +71,6 @@ public class ShowAlarm extends AppCompatActivity {
                 this.year = cal.get(Calendar.YEAR);
                 this.month = cal.get(Calendar.MONTH);
                 this.day = cal.get(Calendar.DAY_OF_MONTH);
-                this.hour = cal.get(Calendar.HOUR_OF_DAY);
-                this.minute = cal.get(Calendar.MINUTE);
 
                 /**
                  * get stuff from database
@@ -169,6 +160,9 @@ public class ShowAlarm extends AppCompatActivity {
         DateFragment dateFragment = new DateFragment();
         Bundle bundle = new Bundle(); //bundle to be sent
 
+        //let the fragment know it's for a reminder
+        bundle.putString("alarmType","Reminder");
+
         Bundle extras = getIntent().getExtras();
         //get time from database to be default time if editing, current time if adding
         if (extras != null) { //if there's something in the bundle
@@ -198,38 +192,6 @@ public class ShowAlarm extends AppCompatActivity {
         dateFragment.show(fm, "Dialog Fragment");
     }
 
-    public void showTimeDialog(View view) {
-        TimeFragment timeFragment = new TimeFragment();
-        Bundle bundle = new Bundle();
-
-        Bundle extras = getIntent().getExtras();
-        //get time from database to be default time if editing, current time if adding
-        if (extras != null) { //if there's something in the bundle
-            //int Value = extras.getInt("id"); //get the id to search
-
-            if (Value > 0) {
-                //editing, so get time from database
-                long dataDate = getTimeDatabase();
-                //convert long to ints
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(dataDate);
-                bundle.putInt("hour", c.get(Calendar.HOUR_OF_DAY));
-                bundle.putInt("minute", c.get(Calendar.MINUTE));
-
-            } else {
-                //adding an alarm, current time is default
-                bundle.putInt("hour", hour);
-                bundle.putInt("minute", minute);
-            }
-        }
-
-        timeFragment.setArguments(bundle);
-
-        timeFragment.show(fm, "Dialog Fragment");
-
-
-    }
-
     /**
      * @return time from database corresponding to id in Value
      */
@@ -257,20 +219,6 @@ public class ShowAlarm extends AppCompatActivity {
         this.month = m;
         this.day = d;
         printTime(); //update button
-    }
-
-    public void timePass(int h, int m) {
-        //update instance variables
-        this.hour = h;
-        this.minute = m;
-        printTime();
-    }
-
-    public void intervalPass(long interval) {
-        this.interval = interval;
-        repeat = interval != 0; //if interval 0, it's not repeating, otherwise it is
-        Button intervalButton = (Button) findViewById(R.id.intervalButton);
-        intervalButton.setText(intervalToText(interval));
     }
 
 //    public String millisToText(long m) {
@@ -348,8 +296,6 @@ public class ShowAlarm extends AppCompatActivity {
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, day);
-        c.set(Calendar.HOUR_OF_DAY, hour);
-        c.set(Calendar.MINUTE, minute);
         c.set(Calendar.SECOND, 0);
 
         //show text on buttons instead of in a texview
@@ -361,15 +307,10 @@ public class ShowAlarm extends AppCompatActivity {
         currentDateTimeString = DateFormat.getDateTimeInstance().format(date);
 
         Button dateButton = (Button) findViewById(R.id.setDate);
-        Button timeButton = (Button) findViewById(R.id.setTime);
 
         Date dateOnly = new Date(c.getTimeInMillis());
         String dateString = DateFormat.getDateInstance().format(dateOnly);
         dateButton.setText(dateString);
-
-        Date timeOnly = new Date(c.getTimeInMillis());
-        String timeString = DateFormat.getTimeInstance().format(timeOnly);
-        timeButton.setText(timeString);
     }
 
     public long timeToInt() {
@@ -379,8 +320,8 @@ public class ShowAlarm extends AppCompatActivity {
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, day);
-        c.set(Calendar.HOUR_OF_DAY, hour);
-        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.HOUR_OF_DAY, 3); //for reminders, set time at 3 in the morning
+        c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
 
         return c.getTimeInMillis();
@@ -496,9 +437,7 @@ public class ShowAlarm extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_reminder, menu);
-//        MenuItem item = menu.findItem(R.id.action_new_alarm); //go back to main
-//        item.setTitle(R.string.main);
+        getMenuInflater().inflate(R.menu.menu_reminder, menu); //inflate reminder menu
         return true;
     }
 
@@ -507,5 +446,4 @@ public class ShowAlarm extends AppCompatActivity {
         addAlarm(); //also save
         return true;
     }
-
 }

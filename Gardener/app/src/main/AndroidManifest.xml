@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.abbyberkers.gardener">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,11 @@
             android:name=".ShowAlarm"
             android:label="@string/title_activity_show_alarm"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".ShowReminder"
+            android:label="@string/title_activity_show_reminder"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
 
         <!-- <activity android:name=".DisplayNotification" -->
         <!-- android:theme="@android:style/Theme.Translucent.NoTitleBar"> -->

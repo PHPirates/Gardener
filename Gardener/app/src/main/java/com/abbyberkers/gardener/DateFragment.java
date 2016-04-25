@@ -30,7 +30,13 @@ public class DateFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        ((ShowAlarm) getActivity()).datePass(year, month, day); //send data to showalarm
+        String alarmType = getArguments().getString("alarmType");
+        if (alarmType != null) {
+            ((ShowReminder) getActivity()).datePass(year, month, day); //send data to showreminder
+
+        } else {
+            ((ShowAlarm) getActivity()).datePass(year, month, day); //send data to showalarm
+        }
     }
 
 
